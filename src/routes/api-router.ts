@@ -1,8 +1,9 @@
-import express from 'express';
-const apiRouter = express.Router()
+import express, { Request, Response, Router } from 'express';
+import db from '../db';
+const apiRouter:Router = express.Router()
 
-apiRouter.get('/', (req, res) => {
-    console.log('testing endpoint')
+apiRouter.get('/', (req:Request, res:Response) => {
+    db.query(`SELECT * FROM games;`)
     res.send('test')
 }
 )

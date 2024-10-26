@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/listen.js",
-    "dev": "tsc && nodemon dist/listen.js"
+    "start": "nodemon dist/listen.js",
+    "dev": "npx tsc -w & nodemon dist/listen.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "@types/pg": "^8.11.10",
     "@types/pg-format": "^1.0.5",
     "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
   "dependencies": {
