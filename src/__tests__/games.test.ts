@@ -1,14 +1,13 @@
 import supertest from "supertest"; 'supertest'
-import { beforeEach, describe } from "node:test";
 import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
 
+beforeEach(async () =>await seed(testData))
 afterAll(() => db.end())
-console.log(db.options.database)
+
 describe('GET/api/games', () => {
-    beforeEach(async () =>await seed(testData))
     it('returns an array of the correct length', () => {
         return supertest(app).get(`/api/games`)
             .expect(200)
