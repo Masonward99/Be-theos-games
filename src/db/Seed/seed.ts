@@ -1,5 +1,5 @@
 import format from 'pg-format'
-import db from '../../db.js'
+import db from '../../db'
 
 const dropTables = () => {
     return db.query(`DROP TABLE IF EXISTS order_items;`)
@@ -156,7 +156,7 @@ const addData = (data: SeedData) => {
   })
 }
 
-export const seed = (seedData : SeedData) => {
+export const seed = (seedData: SeedData) => {
   return dropTables()
     .then(() => createTables())
     .then(()=> addData(seedData))
