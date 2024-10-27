@@ -3,7 +3,6 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
-import exp from "constants";
 
 beforeEach(async () =>await seed(testData))
 afterAll(() => db.end())
