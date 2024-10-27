@@ -1,4 +1,4 @@
-export const cardSleeves = [
+export const sleeves = [
   {
     id: 1,
     name: "Ultra Pro Standard Sleeves",
@@ -6,7 +6,7 @@ export const cardSleeves = [
     stock: 200,
     height: 88,
     width: 63,
-    pack_size: "50",
+    pack_size: 50,
     description: "Standard sleeves for card protection.",
   },
   {
@@ -16,7 +16,7 @@ export const cardSleeves = [
     stock: 150,
     height: 88,
     width: 63,
-    pack_size: "100",
+    pack_size: 100,
     description: "Durable sleeves with a matte finish.",
   },
   {
@@ -26,7 +26,7 @@ export const cardSleeves = [
     stock: 250,
     height: 86,
     width: 61,
-    pack_size: "100",
+    pack_size: 100,
     description: "Perfect fit sleeves for additional protection.",
   },
   {
@@ -36,7 +36,7 @@ export const cardSleeves = [
     stock: 180,
     height: 88,
     width: 63,
-    pack_size: "50",
+    pack_size: 50,
     description: "Affordable sleeves for casual gamers.",
   },
   {
@@ -46,7 +46,7 @@ export const cardSleeves = [
     stock: 170,
     height: 89,
     width: 64,
-    pack_size: "100",
+    pack_size: 100,
     description: "Versatile sleeves with various sizes.",
   },
   {
@@ -56,7 +56,7 @@ export const cardSleeves = [
     stock: 140,
     height: 88,
     width: 63,
-    pack_size: "80",
+    pack_size: 80,
     description: "High-quality sleeves with great texture.",
   },
 ];

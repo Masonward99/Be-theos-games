@@ -1,38 +1,38 @@
 export const categories = [
   {
     id: 1,
-    name: "Strategy",
+    name: "strategy",
     description: "Games that require careful planning and decision-making.",
   },
   {
     id: 2,
-    name: "Party",
+    name: "party",
     description:
       "Games designed for larger groups, focusing on social interaction.",
   },
   {
     id: 3,
-    name: "Cooperative",
+    name: "cooperative",
     description: "Games where players work together towards a common goal.",
   },
   {
     id: 4,
-    name: "Thematic",
+    name: "thematic",
     description: "Games with rich storytelling and immersive themes.",
   },
   {
     id: 5,
-    name: "Card Games",
+    name: "card-games",
     description: "Games primarily played with cards.",
   },
   {
     id: 6,
-    name: "Family",
+    name: "family",
     description: "Games suitable for family play, often easy to learn.",
   },
   {
     id: 7,
-    name: "Economic",
+    name: "economic",
     description: "Games focusing on resource management and trading.",
   },
 ];

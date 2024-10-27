@@ -1,6 +1,5 @@
 export const games = [
   {
-    id: 1,
     name: "Terraforming Mars",
     price: 3000,
     stock: 25,
@@ -8,7 +7,6 @@ export const games = [
     bgg_id: 12345,
   },
   {
-    id: 2,
     name: "Codenames",
     price: 2000,
     stock: 15,
@@ -17,7 +15,6 @@ export const games = [
     bgg_id: 23456,
   },
   {
-    id: 3,
     name: "Root",
     price: 4000,
     stock: 20,
@@ -26,7 +23,6 @@ export const games = [
     bgg_id: 34567,
   },
   {
-    id: 4,
     name: "Wingspan",
     price: 5000,
     stock: 10,
@@ -34,7 +30,6 @@ export const games = [
     bgg_id: 45678,
   },
   {
-    id: 5,
     name: "The Crew",
     price: 1500,
     stock: 30,
@@ -42,7 +37,6 @@ export const games = [
     bgg_id: 56789,
   },
   {
-    id: 6,
     name: "Gaia Project",
     price: 4500,
     stock: 12,
@@ -50,7 +44,6 @@ export const games = [
     bgg_id: 67890,
   },
   {
-    id: 7,
     name: "Scythe",
     price: 7000,
     stock: 8,
@@ -58,7 +51,6 @@ export const games = [
     bgg_id: 78901,
   },
   {
-    id: 8,
     name: "Gloomhaven: Jaws of the Lion",
     price: 2500,
     stock: 18,
@@ -66,7 +58,6 @@ export const games = [
     bgg_id: 89012,
   },
   {
-    id: 9,
     name: "Blood Rage",
     price: 5200,
     stock: 14,
@@ -74,7 +65,6 @@ export const games = [
     bgg_id: 90123,
   },
   {
-    id: 10,
     name: "Pandemic Legacy: Season 1",
     price: 3500,
     stock: 22,
@@ -82,7 +72,6 @@ export const games = [
     bgg_id: 10234,
   },
   {
-    id: 11,
     name: "Splendor",
     price: 2800,
     stock: 26,
@@ -90,7 +79,6 @@ export const games = [
     bgg_id: 11234,
   },
   {
-    id: 12,
     name: "Ticket to Ride: Europe",
     price: 4000,
     stock: 19,
@@ -98,7 +86,6 @@ export const games = [
     bgg_id: 12234,
   },
   {
-    id: 13,
     name: "Carcassonne",
     price: 2200,
     stock: 28,
@@ -107,7 +94,6 @@ export const games = [
     bgg_id: 13234,
   },
   {
-    id: 14,
     name: "Azul: Summer Pavilion",
     price: 3200,
     stock: 17,
@@ -115,7 +101,6 @@ export const games = [
     bgg_id: 14234,
   },
   {
-    id: 15,
     name: "Sherlock Holmes: Consulting Detective",
     price: 2600,
     stock: 20,
@@ -123,7 +108,6 @@ export const games = [
     bgg_id: 15234,
   },
   {
-    id: 16,
     name: "Everdell",
     price: 4800,
     stock: 9,

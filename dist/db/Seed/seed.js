@@ -3,16 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addData = exports.createTables = void 0;
+exports.seed = void 0;
 const pg_format_1 = __importDefault(require("pg-format"));
 const db_js_1 = __importDefault(require("../../db.js"));
-const games_js_1 = require("../data/test-data/games.js");
-const categories_js_1 = require("../data/test-data/categories.js");
-const users_js_1 = require("../data/test-data/users.js");
-const sleeves_js_1 = require("../data/test-data/sleeves.js");
-const cards_js_1 = require("../data/test-data/cards.js");
-const gameCategories_js_1 = require("../data/test-data/gameCategories.js");
-const reviews_js_1 = require("../data/test-data/reviews.js");
 const dropTables = () => {
     return db_js_1.default.query(`DROP TABLE IF EXISTS order_items;`)
         .then(() => db_js_1.default.query(`DROP TABLE IF EXISTS orders;`))
@@ -36,8 +29,7 @@ const createTables = () => {
         game_body TEXT,
         bgg_id INT);`)
         .then(() => db_js_1.default.query(`CREATE TABLE categories (
-        category_id SERIAL PRIMARY KEY,
-        category_name VARCHAR,
+        category_name VARCHAR PRIMARY KEY,
         description TEXT);`))
         .then(() => db_js_1.default.query(`CREATE TABLE sleeves (
         sleeve_id SERIAL PRIMARY KEY,
@@ -49,8 +41,7 @@ const createTables = () => {
         pack_size INT,
         description TEXT);`))
         .then(() => db_js_1.default.query(`CREATE TABLE users (
-        user_id SERIAL PRIMARY KEY,
-        username VARCHAR,
+        username VARCHAR PRIMARY KEY,
         first_name VARCHAR,
         last_name VARCHAR,
         dob DATE,
@@ -67,24 +58,24 @@ const createTables = () => {
         .then(() => db_js_1.default.query(`CREATE TABLE games_categories (
         id SERIAL PRIMARY KEY,
         game_id INT REFERENCES games(game_id),
-        category_id INT REFERENCES categories(category_id));`))
+        category_name VARCHAR REFERENCES categories(category_name));`))
         .then(() => db_js_1.default.query(`CREATE TABLE addresses (
         address_id SERIAL PRIMARY KEY,
         is_default BOOL,
         postcode VARCHAR,
         city  VARCHAR,
-        user_id INT REFERENCES users(user_id));`))
+        user_id VARCHAR REFERENCES users(username));`))
         .then(() => db_js_1.default.query(`CREATE TABLE orders (
         order_id SERIAL PRIMARY KEY,
         address_id INT REFERENCES addresses(address_id),
-        user_id INT REFERENCES users(user_id),
+        user_id VARCHAR REFERENCES users(username),
         date DATE);`))
         .then(() => db_js_1.default.query(`CREATE TABLE reviews (
         review_id SERIAL PRIMARY KEY,
         entity_id INT,
         entity_type VARCHAR,
         rating INT,
-        author INT REFERENCES users(user_id),
+        author VARCHAR REFERENCES users(username),
         review_body TEXT,
         review_title VARCHAR,
         created_at DATE)`))
@@ -102,34 +93,38 @@ const createTables = () => {
         entity_name VARCHAR,
         order_id INT REFERENCES orders(order_id));`));
 };
-exports.createTables = createTables;
-const addData = () => {
-    const insertGamesQueryStr = (0, pg_format_1.default)(`INSERT INTO games (name, price, stock, game_body, bgg_id) VALUES %L;`, games_js_1.games.map(({ name, price, stock, game_body, bgg_id }) => [name, price, stock, game_body, bgg_id]));
+const addData = (data) => {
+    const { games, categories, users, sleeves, gameCards, gameCategories, reviews } = data;
+    const insertGamesQueryStr = (0, pg_format_1.default)(`INSERT INTO games (name, price, stock, game_body, bgg_id) VALUES %L;`, games.map(({ name, price, stock, game_body, bgg_id }) => [name, price, stock, game_body, bgg_id]));
     return db_js_1.default.query(insertGamesQueryStr)
         .then(() => {
-        const insertCategoriesQueryStr = (0, pg_format_1.default)(`INSERT INTO categories (category_name, description) VALUES %L;`, categories_js_1.categories.map(({ name, description }) => [name, description]));
+        const insertCategoriesQueryStr = (0, pg_format_1.default)(`INSERT INTO categories (category_name, description) VALUES %L;`, categories.map(({ name, description }) => [name, description]));
         return db_js_1.default.query(insertCategoriesQueryStr);
     })
         .then(() => {
-        const insertUsersQueryStr = (0, pg_format_1.default)(`INSERT INTO users (username, first_name, last_name, dob, email, firebase_uid, title) VALUES %L;`, users_js_1.users.map(({ username, first_name, last_name, DOB, email, firebase_uid, title }) => [username, first_name, last_name, DOB, email, firebase_uid, title]));
+        const insertUsersQueryStr = (0, pg_format_1.default)(`INSERT INTO users (username, first_name, last_name, dob, email, firebase_uid, title) VALUES %L;`, users.map(({ username, first_name, last_name, dob, email, firebase_uid, title }) => [username, first_name, last_name, dob, email, firebase_uid, title]));
         return db_js_1.default.query(insertUsersQueryStr);
     })
         .then(() => {
-        const insertSleevesQueryStr = (0, pg_format_1.default)(`INSERT INTO sleeves (sleeve_name, price, stock, height, width, pack_size, description) VALUES %L;`, sleeves_js_1.sleeves.map(({ name, height, width, pack_size, stock, description, price }) => [name, price, stock, height, width, pack_size, description]));
+        const insertSleevesQueryStr = (0, pg_format_1.default)(`INSERT INTO sleeves (sleeve_name, price, stock, height, width, pack_size, description) VALUES %L;`, sleeves.map(({ name, height, width, pack_size, stock, description, price }) => [name, price, stock, height, width, pack_size, description]));
         return db_js_1.default.query(insertSleevesQueryStr);
     })
         .then(() => {
-        const insertCardsQueryStr = (0, pg_format_1.default)(`INSERT INTO cards (card_name, height, width, game_id, qty) VALUES %L;`, cards_js_1.gameCards.map(({ name, height, width, game_id, qty }) => [name, height, width, game_id, qty]));
+        const insertCardsQueryStr = (0, pg_format_1.default)(`INSERT INTO cards (card_name, height, width, game_id, qty) VALUES %L;`, gameCards.map(({ name, height, width, game_id, qty }) => [name, height, width, game_id, qty]));
         return db_js_1.default.query(insertCardsQueryStr);
     })
         .then(() => {
-        const insertGameCategoriesQueryStr = (0, pg_format_1.default)(`INSERT INTO games_categories (game_id, category_id) VALUES %L;`, gameCategories_js_1.gameCategories.map(({ game_id, category_id }) => [game_id, category_id]));
+        const insertGameCategoriesQueryStr = (0, pg_format_1.default)(`INSERT INTO games_categories (game_id, category_name) VALUES %L;`, gameCategories.map(({ game_id, category_name }) => [game_id, category_name]));
         return db_js_1.default.query(insertGameCategoriesQueryStr);
     })
         .then(() => {
-        const insertReviewsQueryStr = (0, pg_format_1.default)(`INSERT INTO reviews (entity_id, entity_type, rating, author, review_body, review_title, created_at) VALUES %L;`, reviews_js_1.reviews.map(({ entity_type, entity_id, rating, review_body, review_title, author, created_at }) => [entity_id, entity_type, rating, author, review_body, review_title, created_at]));
+        const insertReviewsQueryStr = (0, pg_format_1.default)(`INSERT INTO reviews (entity_id, entity_type, rating, author, review_body, review_title, created_at) VALUES %L;`, reviews.map(({ entity_type, entity_id, rating, review_body, review_title, author, created_at }) => [entity_id, entity_type, rating, author, review_body, review_title, created_at]));
         return db_js_1.default.query(insertReviewsQueryStr);
     });
 };
-exports.addData = addData;
-exports.default = dropTables;
+const seed = (seedData) => {
+    return dropTables()
+        .then(() => createTables())
+        .then(() => addData(seedData));
+};
+exports.seed = seed;

@@ -18,7 +18,7 @@ const config =
     : {
        database: process.env.DATABASE_URL
     };
-
+console.log(ENV)
 
 const db:Pool = new Pool(config)
 export default db

@@ -1,4 +1,4 @@
-export const cardData = [
+export const gameCards = [
   // Cards for Terraforming Mars
   {
     game_id: 1,

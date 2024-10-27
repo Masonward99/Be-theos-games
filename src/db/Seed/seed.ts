@@ -1,12 +1,5 @@
 import format from 'pg-format'
 import db from '../../db.js'
-import { games } from '../data/test-data/games.js'
-import { categories } from '../data/test-data/categories.js'
-import { users } from '../data/test-data/users.js'
-import { sleeves } from '../data/test-data/sleeves.js'
-import { gameCards } from '../data/test-data/cards.js'
-import { gameCategories } from '../data/test-data/gameCategories.js'
-import { reviews } from '../data/test-data/reviews.js'
 
 const dropTables = () => {
     return db.query(`DROP TABLE IF EXISTS order_items;`)
@@ -22,7 +15,7 @@ const dropTables = () => {
         .then(() => db.query(`DROP TABLE IF EXISTS games;`))
 }
 
-export const createTables = () => {
+const createTables = () => {
     return db
       .query(
         `CREATE TABLE games (
@@ -35,8 +28,7 @@ export const createTables = () => {
       )
       .then(() =>
         db.query(`CREATE TABLE categories (
-        category_id SERIAL PRIMARY KEY,
-        category_name VARCHAR,
+        category_name VARCHAR PRIMARY KEY,
         description TEXT);`)
       )
       .then(() =>
@@ -52,8 +44,7 @@ export const createTables = () => {
       )
       .then(() =>
         db.query(`CREATE TABLE users (
-        user_id SERIAL PRIMARY KEY,
-        username VARCHAR,
+        username VARCHAR PRIMARY KEY,
         first_name VARCHAR,
         last_name VARCHAR,
         dob DATE,
@@ -74,7 +65,7 @@ export const createTables = () => {
         db.query(`CREATE TABLE games_categories (
         id SERIAL PRIMARY KEY,
         game_id INT REFERENCES games(game_id),
-        category_id INT REFERENCES categories(category_id));`)
+        category_name VARCHAR REFERENCES categories(category_name));`)
       )
       .then(() =>
         db.query(`CREATE TABLE addresses (
@@ -82,13 +73,13 @@ export const createTables = () => {
         is_default BOOL,
         postcode VARCHAR,
         city  VARCHAR,
-        user_id INT REFERENCES users(user_id));`)
+        user_id VARCHAR REFERENCES users(username));`)
       )
       .then(() =>
         db.query(`CREATE TABLE orders (
         order_id SERIAL PRIMARY KEY,
         address_id INT REFERENCES addresses(address_id),
-        user_id INT REFERENCES users(user_id),
+        user_id VARCHAR REFERENCES users(username),
         date DATE);`)
       )
       .then(() =>
@@ -97,7 +88,7 @@ export const createTables = () => {
         entity_id INT,
         entity_type VARCHAR,
         rating INT,
-        author INT REFERENCES users(user_id),
+        author VARCHAR REFERENCES users(username),
         review_body TEXT,
         review_title VARCHAR,
         created_at DATE)`)
@@ -120,9 +111,11 @@ export const createTables = () => {
         order_id INT REFERENCES orders(order_id));`)
       );
 }
-export const addData = () => {
+
+const addData = (data: SeedData) => {
+  const { games, categories, users, sleeves, gameCards, gameCategories, reviews } = data; 
   const insertGamesQueryStr = format(`INSERT INTO games (name, price, stock, game_body, bgg_id) VALUES %L;`, 
-    games.map(({ name, price, stock, game_body, bgg_id }) => [name, price, stock, game_body, bgg_id])
+    games.map(({ name , price, stock, game_body, bgg_id }) => [name, price, stock, game_body, bgg_id])
   )
   return db.query(insertGamesQueryStr)
     .then(() => {
@@ -133,7 +126,7 @@ export const addData = () => {
     })
     .then(() => {
       const insertUsersQueryStr = format(`INSERT INTO users (username, first_name, last_name, dob, email, firebase_uid, title) VALUES %L;`,
-      users.map(({username, first_name, last_name, DOB, email, firebase_uid, title}) => [username, first_name, last_name, DOB, email, firebase_uid, title])
+      users.map(({username, first_name, last_name, dob, email, firebase_uid, title}) => [username, first_name, last_name, dob, email, firebase_uid, title])
       )
       return db.query(insertUsersQueryStr)
     })
@@ -150,8 +143,8 @@ export const addData = () => {
       return db.query(insertCardsQueryStr)
     })
     .then(() => {
-      const insertGameCategoriesQueryStr = format(`INSERT INTO games_categories (game_id, category_id) VALUES %L;`,
-        gameCategories.map(({ game_id, category_id }) => [game_id, category_id])
+      const insertGameCategoriesQueryStr = format(`INSERT INTO games_categories (game_id, category_name) VALUES %L;`,
+        gameCategories.map(({ game_id, category_name }) => [game_id, category_name])
       )
       return db.query(insertGameCategoriesQueryStr)
     })
@@ -163,4 +156,8 @@ export const addData = () => {
   })
 }
 
-export default dropTables
+export const seed = (seedData : SeedData) => {
+  return dropTables()
+    .then(() => createTables())
+    .then(()=> addData(seedData))
+}

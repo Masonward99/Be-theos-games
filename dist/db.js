@@ -20,5 +20,6 @@ const config = ENV === "production"
     : {
         database: process.env.DATABASE_URL
     };
+console.log(ENV);
 const db = new pg_1.Pool(config);
 exports.default = db;
