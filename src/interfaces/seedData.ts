@@ -1,3 +1,5 @@
+
+
 interface SeedData {
   games: {
     name: string;
@@ -48,4 +50,13 @@ interface SeedData {
     author: string;
     created_at: string;
   }[];
+}
+interface Game {
+    game_id: string
+    name: string;
+    price: number;
+    stock: number;
+    game_body: string;
+    bgg_id: number;
+  
 }
