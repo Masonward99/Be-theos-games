@@ -8,3 +8,8 @@ export const checkExists = async (tableName: string, columnName: string , valueA
     return Promise.reject({ status: 404, msg: "Resource not found" });
   }
 };
+
+export const emailExists = async (email: string) =>  {
+  const userData = await db.query("SELECT * FROM users WHERE email = $1;", [email])
+  return !(userData.rows.length == 0)
+}

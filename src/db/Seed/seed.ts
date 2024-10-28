@@ -50,7 +50,8 @@ const createTables = () => {
         dob DATE,
         email VARCHAR,
         firebase_uid VARCHAR,
-        title VARCHAR);`)
+        title VARCHAR,
+        password VARCHAR);`)
       )
       .then(() =>
         db.query(`CREATE TABLE cards (

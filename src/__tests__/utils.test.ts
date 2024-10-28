@@ -1,5 +1,7 @@
+import db from "../db";
 import { checkExists } from "../utils";
 
+afterAll(()=> db.end())
 describe(`check exists`, () => {
     it('returns a rejected promise if the item doesnt exist in the db', () => {
         return expect( checkExists('games', 'game_id', [19])).rejects.toEqual({status: 404, msg:'Resource not found'})
