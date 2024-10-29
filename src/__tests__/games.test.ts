@@ -1,11 +1,11 @@
-import supertest from "supertest"; 'supertest'
+import supertest from "supertest";
 import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
-import exp from "constants";
 
-beforeEach(() => seed(testData))
+
+beforeEach(async () => await seed(testData))
 afterAll(() => db.end())
 
 describe('GET/api/games', () => {

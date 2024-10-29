@@ -47,7 +47,8 @@ const createTables = () => {
         dob DATE,
         email VARCHAR,
         firebase_uid VARCHAR,
-        title VARCHAR);`))
+        title VARCHAR,
+        password VARCHAR);`))
         .then(() => db_1.default.query(`CREATE TABLE cards (
         card_id SERIAL PRIMARY KEY,
         card_name VARCHAR NOT NULL,
@@ -123,7 +124,6 @@ const addData = (data) => {
     });
 };
 const seed = (seedData) => {
-    console.log(seedData);
     return dropTables()
         .then(() => createTables())
         .then(() => addData(seedData));

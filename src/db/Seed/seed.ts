@@ -49,8 +49,8 @@ const createTables = () => {
         last_name VARCHAR,
         dob DATE,
         email VARCHAR,
-        firebase_uid VARCHAR,
-        title VARCHAR);`)
+        title VARCHAR,
+        password VARCHAR  NOT NULL);`)
       )
       .then(() =>
         db.query(`CREATE TABLE cards (
@@ -125,8 +125,8 @@ const addData = (data: SeedData) => {
       return db.query(insertCategoriesQueryStr)
     })
     .then(() => {
-      const insertUsersQueryStr = format(`INSERT INTO users (username, first_name, last_name, dob, email, firebase_uid, title) VALUES %L;`,
-      users.map(({username, first_name, last_name, dob, email, firebase_uid, title}) => [username, first_name, last_name, dob, email, firebase_uid, title])
+      const insertUsersQueryStr = format(`INSERT INTO users (username, first_name, last_name, dob, email, password, title) VALUES %L;`,
+      users.map(({username, first_name, last_name, dob, email, password, title}) => [username, first_name, last_name, dob, email, password, title])
       )
       return db.query(insertUsersQueryStr)
     })
