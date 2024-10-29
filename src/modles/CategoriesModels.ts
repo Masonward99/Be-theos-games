@@ -11,3 +11,8 @@ export async function findCategories() {
   ).rows;
   return categories
 }
+
+export async function addCategory(name : string , description: string) {
+  const category = await db.query(`INSERT INTO categories (category_name, description) VALUES ($1, $2) RETURNING *;`, [name, description])
+  return category.rows[0]
+}
