@@ -18,7 +18,7 @@ interface SeedData {
     last_name: string;
     title: string;
     dob: string;
-    firebase_uid: string;
+    password: string;
     email: string;
   }[];
   sleeves: {

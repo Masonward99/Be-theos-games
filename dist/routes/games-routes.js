@@ -8,4 +8,8 @@ const GamesController_1 = require("../controllers/GamesController");
 const gamesRouter = express_1.default.Router();
 gamesRouter.route('/')
     .get(GamesController_1.getGames);
+gamesRouter.route(`/:game_id`)
+    .get(GamesController_1.getGame);
+gamesRouter.route(`/:game_id/reviews`)
+    .get(GamesController_1.getGameReviews);
 exports.default = gamesRouter;

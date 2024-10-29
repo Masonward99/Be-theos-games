@@ -5,7 +5,7 @@ export const users = [
     last_name: "Smith",
     dob: "1990-05-15",
     email: "alice@example.com",
-    firebase_uid: "UID_1",
+    password: "1234",
     title: "Ms.",
   },
   {
@@ -14,7 +14,7 @@ export const users = [
     last_name: "Johnson",
     dob: "1985-03-10",
     email: "bob@example.com",
-    firebase_uid: "UID_2",
+    password: "1234",
     title: "Mr.",
   },
   {
@@ -23,7 +23,7 @@ export const users = [
     last_name: "Williams",
     dob: "1978-11-20",
     email: "charlie@example.com",
-    firebase_uid: "UID_3",
+    password: "1234",
     title: "Mr.",
   },
   {
@@ -32,7 +32,7 @@ export const users = [
     last_name: "Brown",
     dob: "1995-07-30",
     email: "diana@example.com",
-    firebase_uid: "UID_4",
+    password: "1234",
     title: "Ms.",
   },
   {
@@ -41,7 +41,7 @@ export const users = [
     last_name: "Jones",
     dob: "1992-01-25",
     email: "eve@example.com",
-    firebase_uid: "UID_5",
+    password: "1234",
     title: "Ms.",
   },
   {
@@ -50,7 +50,7 @@ export const users = [
     last_name: "Garcia",
     dob: "1988-09-18",
     email: "frank@example.com",
-    firebase_uid: "UID_6",
+    password: "1234",
     title: "Mr.",
   },
   {
@@ -59,7 +59,7 @@ export const users = [
     last_name: "Martinez",
     dob: "1993-12-05",
     email: "grace@example.com",
-    firebase_uid: "UID_7",
+    password: "1234",
     title: "Ms.",
   },
   {
@@ -68,7 +68,7 @@ export const users = [
     last_name: "Hernandez",
     dob: "1980-08-22",
     email: "henry@example.com",
-    firebase_uid: "UID_8",
+    password: "1234",
     title: "Mr.",
   },
   {
@@ -77,7 +77,7 @@ export const users = [
     last_name: "Lopez",
     dob: "1991-04-13",
     email: "isla@example.com",
-    firebase_uid: "UID_9",
+    password: "1234",
     title: "Ms.",
   },
 ];
