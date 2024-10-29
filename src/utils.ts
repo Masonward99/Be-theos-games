@@ -1,5 +1,6 @@
 import db from "./db";
 import format from "pg-format";
+import bcrypt from 'bcryptjs'
 
 export const checkExists = async (tableName: string, columnName: string , valueArray: any) => {
   const queryStr = format("SELECT * FROM %I WHERE %I = $1;", tableName, columnName);
@@ -12,4 +13,8 @@ export const checkExists = async (tableName: string, columnName: string , valueA
 export const emailExists = async (email: string) =>  {
   const userData = await db.query("SELECT * FROM users WHERE email = $1;", [email])
   return !(userData.rows.length == 0)
+}
+
+export const checkPassword = async (actualPassword: string, password: string) => {
+  return await bcrypt.compare(password, actualPassword)
 }
