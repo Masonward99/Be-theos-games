@@ -20,10 +20,12 @@ const passportConfig_1 = __importDefault(require("../passportConfig"));
 function postUser(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let { username, password, email, dob, title, first_name, last_name } = req.body;
-        password = yield bcryptjs_1.default.hash(password, 10);
         try {
+            if (!password)
+                return res.status(400).send('password is required');
+            password = yield bcryptjs_1.default.hash(password, 10);
             const user = yield (0, UsersModels_1.addUser)(username, password, email, dob, title, first_name, last_name);
-            return res.status(201).send(user);
+            return res.status(201).send({ user });
         }
         catch (error) {
             next(error);
@@ -39,6 +41,7 @@ function login(req, res, next) {
         req.logIn(user, (err) => {
             if (err)
                 return res.status(500).send({ msg: "Server error" });
+            //user data without password field
             const userData = {
                 username: user.username,
                 title: user.title,

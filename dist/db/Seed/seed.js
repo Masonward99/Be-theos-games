@@ -46,9 +46,8 @@ const createTables = () => {
         last_name VARCHAR,
         dob DATE,
         email VARCHAR,
-        firebase_uid VARCHAR,
         title VARCHAR,
-        password VARCHAR);`))
+        password VARCHAR  NOT NULL);`))
         .then(() => db_1.default.query(`CREATE TABLE cards (
         card_id SERIAL PRIMARY KEY,
         card_name VARCHAR NOT NULL,
@@ -103,7 +102,7 @@ const addData = (data) => {
         return db_1.default.query(insertCategoriesQueryStr);
     })
         .then(() => {
-        const insertUsersQueryStr = (0, pg_format_1.default)(`INSERT INTO users (username, first_name, last_name, dob, email, firebase_uid, title) VALUES %L;`, users.map(({ username, first_name, last_name, dob, email, firebase_uid, title }) => [username, first_name, last_name, dob, email, firebase_uid, title]));
+        const insertUsersQueryStr = (0, pg_format_1.default)(`INSERT INTO users (username, first_name, last_name, dob, email, password, title) VALUES %L;`, users.map(({ username, first_name, last_name, dob, email, password, title }) => [username, first_name, last_name, dob, email, password, title]));
         return db_1.default.query(insertUsersQueryStr);
     })
         .then(() => {

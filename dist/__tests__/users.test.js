@@ -20,18 +20,51 @@ const db_1 = __importDefault(require("../db"));
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () { return yield (0, seed_1.seed)(test_data_1.testData); }));
 afterAll(() => db_1.default.end());
 describe('POST/api/users/signup', () => {
+    const user = {
+        username: 'Mw17',
+        password: '1234',
+        dob: '06/06/1999',
+        title: 'Mr.',
+        first_name: 'Mason',
+        last_name: 'Ward',
+        email: 'masonward99@hotmail.com'
+    };
     it('Returns a 201 if given the correct data ', () => {
-        const user = {
-            password: '1234',
-            username: 'Mw17',
-            dob: '06/06/1999',
-            title: 'Mr.',
-            first_name: 'Mason',
-            last_name: 'Ward',
-            email: 'masonward99@hotmail.com'
-        };
         return (0, supertest_1.default)(app_1.default).post('/api/users/signup').send(user);
     });
+    it('Returns a 409 error if username already exists', () => {
+        return (0, supertest_1.default)(app_1.default).post("/api/users/signup").send({
+            username: "boardgamefan",
+            password: "1234",
+            dob: "06/06/1999",
+            title: "Mr.",
+            first_name: "Mason",
+            last_name: "Ward",
+            email: "masonward99@hotmail.com",
+        }).expect(409);
+    });
+    it('returns a 400 error if no password in object', () => {
+        return (0, supertest_1.default)(app_1.default).post("/api/users/signup").send({
+            username: "Mw17",
+            dob: "06/06/1999",
+            title: "Mr.",
+            first_name: "Mason",
+            last_name: "Ward",
+            email: "masonward99@hotmail.com",
+        }).expect(400);
+    });
+    it('returns the created user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const userData = yield (0, supertest_1.default)(app_1.default).post("/api/users/signup").send(user)
+            .expect(201);
+        expect(userData.body.user).toEqual({
+            username: "Mw17",
+            dob: "1999-06-05T23:00:00.000Z",
+            title: "Mr.",
+            first_name: "Mason",
+            last_name: "Ward",
+            email: "masonward99@hotmail.com",
+        });
+    }));
 });
 describe(`POST/api/users/login`, () => {
     const user = {
@@ -67,5 +100,14 @@ describe(`POST/api/users/login`, () => {
             .post("/api/users/login")
             .send({ username: "Mw17", password: "1234" })
             .expect(200);
+        const userData = response.body.userData;
+        expect(userData).toEqual({
+            username: "Mw17",
+            dob: "1999-06-05T23:00:00.000Z",
+            title: "Mr.",
+            first_name: "Mason",
+            last_name: "Ward",
+            email: "masonward99@hotmail.com",
+        });
     }));
 });
