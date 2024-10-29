@@ -3,6 +3,7 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
+import { categories } from "../db/data/test-data/categories";
 
 
 beforeEach(async () => await seed(testData))
@@ -101,5 +102,49 @@ describe('GET/api/games/:game_id/reviews', () => {
     return supertest(app).get('/api/games/4/reviews')
       .expect(200)
       .then(res => expect(res.body.reviews.length).toBe(2))
+  })
+})
+describe('POST/api/games', () => {
+  const game = {
+    name: 'ticket to ride',
+    stock: 50,
+    price: 40,
+    game_body: 'A game about trains',
+    bgg_id: 12345,
+    categories: ['strategy', 'family']
+  }
+  it('returns a 201 when given a suitable body', async () => {
+    let response = await supertest(app).post('/api/games').send(game).expect(201)
+  })
+  it('returns the created game object', async () => {
+    let response = await supertest(app).post('/api/games').send(game).expect(201)
+    expect(response.body.game).toEqual({
+      name: "ticket to ride",
+      stock: 50,
+      price: 40,
+      game_body: "A game about trains",
+      bgg_id: 12345,
+      game_id:17
+    });
+  })
+  it('returns a 400 error if category does not exist', async () => {
+    let response = await supertest(app).post('/api/games').send({
+      name: 'ticket to ride',
+       stock: 50,
+      price: 40,
+      game_body: "A game about trains",
+      bgg_id: 12345,
+      categories:['strategy', 'goblin']
+    }).expect(400)
+  })
+  it('adds the categories to the category join table', async () => { 
+    let response = await supertest(app).post('/api/games').send(game).expect(201)
+    let gameCategories = await db.query("SELECT * FROM games_categories WHERE game_id = 17")
+    expect(gameCategories.rows.length).toBe(2)
+    expect(gameCategories.rows[0]).toEqual({
+      game_id: 17,
+      category_name: 'strategy',
+      id:20
+    })
   })
 })

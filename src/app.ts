@@ -50,9 +50,16 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err.code == "22P02" || err.code == "23502") {
     res.status(400).send("bad request");
   } else {
-    console.log(err);
+    next(err)
   }
 })
-
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (!err.message) {
+     next(err)
+  }
+  if (err.message == 'category does not exist') {
+    res.status(400).send(err.message)
+  }
+ })
 
 export default app

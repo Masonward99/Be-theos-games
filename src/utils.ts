@@ -10,11 +10,7 @@ export const checkExists = async (tableName: string, columnName: string , valueA
   }
 };
 
-export const emailExists = async (email: string) =>  {
-  const userData = await db.query("SELECT * FROM users WHERE email = $1;", [email])
-  return !(userData.rows.length == 0)
-}
-
-export const checkPassword = async (actualPassword: string, password: string) => {
-  return await bcrypt.compare(password, actualPassword)
+export const checkCategoryInUse = async (categoryName:string) => {
+  const category = await db.query('Select * FROM categories WHERE category_name = $1', [categoryName])
+  return !(category.rows.length == 0)
 }

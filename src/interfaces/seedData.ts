@@ -58,5 +58,6 @@ interface Game {
     stock: number;
     game_body: string;
     bgg_id: number;
+  categories?: any
   
 }
