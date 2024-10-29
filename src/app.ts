@@ -39,7 +39,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err.code == "23505") {
-    res.status(409).send("Username already in use");
+    res.status(409).send("Key already in use");
   } else {
     next(err)
   }
@@ -47,7 +47,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  if (err.code == "22P02" ) {
+  if (err.code == "22P02" || err.code == "23502") {
     res.status(400).send("bad request");
   } else {
     console.log(err);
