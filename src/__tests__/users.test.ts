@@ -21,6 +21,7 @@ describe('POST/api/users/signup', () => {
     it('Returns a 201 if given the correct data ', () => {
         return supertest(app).post('/api/users/signup').send(user)
     })
+    
     it('Returns a 409 error if username already exists', () => {
         return supertest(app).post("/api/users/signup").send({
           username: "boardgamefan",

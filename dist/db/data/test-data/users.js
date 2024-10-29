@@ -8,8 +8,8 @@ exports.users = [
         last_name: "Smith",
         dob: "1990-05-15",
         email: "alex.smith@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174000",
         title: "Mr.",
+        password: "1234",
     },
     {
         username: "familygamer",
@@ -17,7 +17,7 @@ exports.users = [
         last_name: "Doe",
         dob: "1985-10-22",
         email: "jamie.doe@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174001",
+        password: "1234",
         title: "Mrs.",
     },
     {
@@ -26,7 +26,7 @@ exports.users = [
         last_name: "Johnson",
         dob: "1992-07-30",
         email: "taylor.johnson@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174002",
+        password: "1234",
         title: "Ms.",
     },
     {
@@ -35,7 +35,7 @@ exports.users = [
         last_name: "Brown",
         dob: "1988-01-12",
         email: "jordan.brown@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174003",
+        password: "1234",
         title: "Mr.",
     },
     {
@@ -44,7 +44,7 @@ exports.users = [
         last_name: "Davis",
         dob: "1995-11-05",
         email: "morgan.davis@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174004",
+        password: "1234",
         title: "Mx.",
     },
     {
@@ -53,7 +53,7 @@ exports.users = [
         last_name: "Wilson",
         dob: "1987-03-28",
         email: "chris.wilson@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174005",
+        password: "1234",
         title: "Mr.",
     },
     {
@@ -62,7 +62,7 @@ exports.users = [
         last_name: "Miller",
         dob: "1991-09-14",
         email: "pat.miller@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174006",
+        password: "1234",
         title: "Ms.",
     },
     {
@@ -71,7 +71,7 @@ exports.users = [
         last_name: "Martinez",
         dob: "1989-06-20",
         email: "drew.martinez@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174007",
+        password: "1234",
         title: "Mr.",
     },
     {
@@ -80,7 +80,7 @@ exports.users = [
         last_name: "Garcia",
         dob: "1993-02-08",
         email: "lee.garcia@example.com",
-        firebase_uid: "uid-123e4567-e89b-12d3-a456-426614174008",
+        password: "1234",
         title: "Ms.",
     },
 ];
