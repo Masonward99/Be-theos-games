@@ -38,6 +38,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  //primary key in use
   if (err.code == "23505") {
     res.status(409).send("Key already in use");
   } else {
@@ -45,6 +46,14 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  //violates non-negative constraint
+  if (err.code == '23514') {
+    res.status(400).send('This value cannot be negative')
+  } else {
+    next(err)
+  }
+})
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err.code == "22P02" || err.code == "23502") {

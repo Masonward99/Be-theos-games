@@ -66,10 +66,29 @@ export async function addCategoriesToGame(categories: string[], game_id: any) {
 }
 
 export async function removeCategoryFromGame(game_id: any, category_name: any) {
-    console.log(game_id, category_name)
     await checkExists('games', 'game_id', [game_id])
     await checkExists('categories', 'category_name', [category_name])
     let res = await db.query("DELETE FROM games_categories WHERE game_id = $1 AND category_name = $2 RETURNING *;", [game_id, category_name]) 
-    console.log(res)
     return res
+}
+
+export async function changeGame(game_id: any, price: any, inc_Stock: any) {
+    let queryValues = []
+    let queryStr = 'UPDATE games SET '
+    await checkExists('games', 'game_id', [game_id])
+    if (price) {
+        queryValues.push(price)
+        queryStr += `price = $${queryValues.length} `
+    }
+    if (inc_Stock) {
+        if (queryValues.length) {
+            queryStr+= ', '
+        }
+        queryValues.push(inc_Stock)
+        queryStr += `stock = stock + $${queryValues.length} `
+    }
+    queryValues.push(game_id)
+    queryStr += `WHERE game_id = $${queryValues.length} RETURNING *;`
+    let game = await db.query(queryStr, queryValues)
+    return game.rows[0]
 }

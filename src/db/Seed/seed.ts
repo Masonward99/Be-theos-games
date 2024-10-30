@@ -21,8 +21,8 @@ const createTables = () => {
         `CREATE TABLE games (
         game_id SERIAL PRIMARY KEY,
         name VARCHAR,
-        price INT,
-        stock INT,
+        price INT NOT NULL CHECK(price >= 0),
+        stock INT NOT NULL CHECK(stock >= 0),
         game_body TEXT,
         bgg_id INT);`
       )
