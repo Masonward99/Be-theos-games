@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.findGames = findGames;
 exports.findGame = findGame;
 exports.findGameReviews = findGameReviews;
+exports.addGame = addGame;
 const db_1 = __importDefault(require("../db"));
 const utils_1 = require("../utils");
 function findGames() {
@@ -49,5 +50,23 @@ function findGameReviews(game_id) {
         yield (0, utils_1.checkExists)('games', 'game_id', [game_id]);
         const reviews = (yield db_1.default.query(`SELECT * FROM reviews WHERE (entity_type = 'games' AND entity_id = $1)`, [game_id])).rows;
         return reviews;
+    });
+}
+function addGame(game) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { categories, name, price, stock, game_body, bgg_id } = game;
+        // check if category name exists for all categories if any do not exist throw an error
+        for (const categoryName of categories) {
+            const exist = yield (0, utils_1.checkCategoryInUse)(categoryName);
+            if (!exist) {
+                throw new Error('category does not exist');
+            }
+        }
+        const insertedGame = (yield db_1.default.query(`INSERT INTO games (name, stock, price, game_body, bgg_id) VALUES ($1,$2,$3,$4,$5) RETURNING *`, [name, stock, price, game_body, bgg_id])).rows[0];
+        // add categories to category game join table 
+        yield categories.every((category) => __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.default.query(`INSERT INTO games_categories (game_id, category_name) VALUES ($1, $2);`, [insertedGame.game_id, category]);
+        }));
+        return insertedGame;
     });
 }

@@ -7,9 +7,12 @@ const express_1 = __importDefault(require("express"));
 const GamesController_1 = require("../controllers/GamesController");
 const gamesRouter = express_1.default.Router();
 gamesRouter.route('/')
-    .get(GamesController_1.getGames);
+    .get(GamesController_1.getGames)
+    .post(GamesController_1.postGame);
 gamesRouter.route(`/:game_id`)
     .get(GamesController_1.getGame);
 gamesRouter.route(`/:game_id/reviews`)
     .get(GamesController_1.getGameReviews);
+gamesRouter.route(`/:game_id/categories`)
+    .post();
 exports.default = gamesRouter;

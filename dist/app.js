@@ -34,18 +34,26 @@ app.use((err, req, res, next) => {
 });
 app.use((err, req, res, next) => {
     if (err.code == "23505") {
-        res.status(409).send("Username already in use");
+        res.status(409).send("Key already in use");
     }
     else {
         next(err);
     }
 });
 app.use((err, req, res, next) => {
-    if (err.code == "22P02") {
+    if (err.code == "22P02" || err.code == "23502") {
         res.status(400).send("bad request");
     }
     else {
-        console.log(err);
+        next(err);
+    }
+});
+app.use((err, req, res, next) => {
+    if (!err.message) {
+        next(err);
+    }
+    if (err.message == 'category does not exist') {
+        res.status(400).send(err.message);
     }
 });
 exports.default = app;

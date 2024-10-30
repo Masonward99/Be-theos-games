@@ -111,3 +111,47 @@ describe('GET/api/games/:game_id/reviews', () => {
             .then(res => expect(res.body.reviews.length).toBe(2));
     });
 });
+describe('POST/api/games', () => {
+    const game = {
+        name: 'ticket to ride',
+        stock: 50,
+        price: 40,
+        game_body: 'A game about trains',
+        bgg_id: 12345,
+        categories: ['strategy', 'family']
+    };
+    it('returns a 201 when given a suitable body', () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(app_1.default).post('/api/games').send(game).expect(201);
+    }));
+    it('returns the created game object', () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(app_1.default).post('/api/games').send(game).expect(201);
+        expect(response.body.game).toEqual({
+            name: "ticket to ride",
+            stock: 50,
+            price: 40,
+            game_body: "A game about trains",
+            bgg_id: 12345,
+            game_id: 17
+        });
+    }));
+    it('returns a 400 error if category does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(app_1.default).post('/api/games').send({
+            name: 'ticket to ride',
+            stock: 50,
+            price: 40,
+            game_body: "A game about trains",
+            bgg_id: 12345,
+            categories: ['strategy', 'goblin']
+        }).expect(400);
+    }));
+    it('adds the categories to the category join table', () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(app_1.default).post('/api/games').send(game).expect(201);
+        let gameCategories = yield db_1.default.query("SELECT * FROM games_categories WHERE game_id = 17");
+        expect(gameCategories.rows.length).toBe(2);
+        expect(gameCategories.rows[0]).toEqual({
+            game_id: 17,
+            category_name: 'strategy',
+            id: 20
+        });
+    }));
+});

@@ -148,3 +148,73 @@ describe('POST/api/games', () => {
     })
   })
 })
+
+describe('DELETE/api/games/:game_id', () => {
+  it('Returns a 204 when given a valid id ', async () => {
+    await supertest(app).delete('/api/games/10').expect(204)
+  })
+  it('Removes the game from the games table', async () => {
+    await supertest(app).delete('/api/games/10').expect(204)
+    let game = await db.query('SELECT * FROM games WHERE game_id = 10')
+    expect(game.rows.length).toBe(0)
+  })
+  it('Returns a 404 error if game_id does not exist', async () => {
+    await supertest(app).delete('/api/games/20').expect(404)
+  })
+  it('Returns a 400 error if the game_id is not a number', async() => {
+    await supertest(app).delete('/api/games/cat').expect(400)
+  })
+  it('Can delete games where other tables depend on the game_id', async () => {
+    await supertest(app).delete('/api/games/1').expect(204)
+  })
+})
+describe('POST/api/games/game_id/categories', () => {
+  it('returns a 201 when categories are added', async() => {
+    await supertest(app)
+      .post("/api/games/1/categories")
+      .send({ categories: ["party"] })
+      .expect(201);
+  })
+  it('returns a body with the correct keys', async () => {
+    let response = await supertest(app).post('/api/games/1/categories').send({ categories: ["party"] }).expect(201)
+    expect(response.body.game).toEqual({
+      game_id: 1,
+      name: "Catan",
+      price: 3499,
+      stock: 20,
+      game_body:
+        "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+      bgg_id: 123456,
+      average_review: "4.5000000000000000",
+      categories: ["family", "party", "strategy"],
+      num_reviews: "2",
+    });
+  })
+  it('returns a 400 error if category name does not exist', async() => {
+    await supertest(app).post('/api/games/1/categories').send({categories: 'hello'}).expect(400)
+  })
+  it('Returns a 404 if game does not exist', async () => {
+    await supertest(app).post('/api/games/25/categories').send({categories:'family'}).expect(404)
+  })
+  it('Returns a 400 error if game id is invalid', async () => {
+    await supertest(app).post('/api/games/cat/categories').send({categories:'family'}).expect(400)
+  })
+  it('Can add multiple categories', async() => {
+     let response = await supertest(app)
+       .post("/api/games/1/categories")
+       .send({ categories: ["party", 'horror'] })
+       .expect(201);
+     expect(response.body.game).toEqual({
+       game_id: 1,
+       name: "Catan",
+       price: 3499,
+       stock: 20,
+       game_body:
+         "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+       bgg_id: 123456,
+       average_review: "4.5000000000000000",
+       categories: ["family", "horror", "party", "strategy" ],
+       num_reviews: "2",
+     });
+  })
+})
