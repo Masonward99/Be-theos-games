@@ -16,6 +16,10 @@ exports.findGames = findGames;
 exports.findGame = findGame;
 exports.findGameReviews = findGameReviews;
 exports.addGame = addGame;
+exports.removeGame = removeGame;
+exports.addCategoriesToGame = addCategoriesToGame;
+exports.removeCategoryFromGame = removeCategoryFromGame;
+exports.changeGame = changeGame;
 const db_1 = __importDefault(require("../db"));
 const utils_1 = require("../utils");
 function findGames() {
@@ -56,17 +60,57 @@ function addGame(game) {
     return __awaiter(this, void 0, void 0, function* () {
         const { categories, name, price, stock, game_body, bgg_id } = game;
         // check if category name exists for all categories if any do not exist throw an error
-        for (const categoryName of categories) {
-            const exist = yield (0, utils_1.checkCategoryInUse)(categoryName);
-            if (!exist) {
-                throw new Error('category does not exist');
-            }
-        }
+        yield (0, utils_1.checkAllCategoriesExist)(categories);
         const insertedGame = (yield db_1.default.query(`INSERT INTO games (name, stock, price, game_body, bgg_id) VALUES ($1,$2,$3,$4,$5) RETURNING *`, [name, stock, price, game_body, bgg_id])).rows[0];
         // add categories to category game join table 
         yield categories.every((category) => __awaiter(this, void 0, void 0, function* () {
             return yield db_1.default.query(`INSERT INTO games_categories (game_id, category_name) VALUES ($1, $2);`, [insertedGame.game_id, category]);
         }));
         return insertedGame;
+    });
+}
+function removeGame(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, utils_1.checkExists)('games', 'game_id', [id]);
+        let game = yield db_1.default.query(`DELETE FROM games WHERE game_id = $1 RETURNING *`, [id]);
+        return game.rows;
+    });
+}
+function addCategoriesToGame(categories, game_id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, utils_1.checkExists)("games", "game_id", [game_id]);
+        yield (0, utils_1.checkAllCategoriesExist)(categories);
+        let game = yield (0, utils_1.addAllCategoriesToGames)(categories, game_id);
+        return game.rows[0];
+    });
+}
+function removeCategoryFromGame(game_id, category_name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, utils_1.checkExists)('games', 'game_id', [game_id]);
+        yield (0, utils_1.checkExists)('categories', 'category_name', [category_name]);
+        let res = yield db_1.default.query("DELETE FROM games_categories WHERE game_id = $1 AND category_name = $2 RETURNING *;", [game_id, category_name]);
+        return res;
+    });
+}
+function changeGame(game_id, price, inc_Stock) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let queryValues = [];
+        let queryStr = 'UPDATE games SET ';
+        yield (0, utils_1.checkExists)('games', 'game_id', [game_id]);
+        if (price) {
+            queryValues.push(price);
+            queryStr += `price = $${queryValues.length} `;
+        }
+        if (inc_Stock) {
+            if (queryValues.length) {
+                queryStr += ', ';
+            }
+            queryValues.push(inc_Stock);
+            queryStr += `stock = stock + $${queryValues.length} `;
+        }
+        queryValues.push(game_id);
+        queryStr += `WHERE game_id = $${queryValues.length} RETURNING *;`;
+        let game = yield db_1.default.query(queryStr, queryValues);
+        return game.rows[0];
     });
 }

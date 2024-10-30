@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { addUser } from "../modles/UsersModels";
+import { addAddress, addUser } from "../modles/UsersModels";
 import bcrypt from 'bcryptjs'
 import passport from '../passportConfig'
 
@@ -33,4 +33,23 @@ export  function login(req: Request, res: Response, next: NextFunction) {
           res.status(200).send({userData});
       });
     })(req, res, next);
+}
+
+export async function postAddress(req: Request, res: Response, next: NextFunction) {
+  let { username } = req.params
+  if (!req.isAuthenticated()) {
+    return res.status(401).send('Need to login to use this endpoint')
+  }
+  const authUser:any = req.user
+  if (!(username == authUser.username)) {
+    return res.status(403).send('Access denied')
+  }
+  let { postcode, address_line1, city } = req.body
+  try {
+    let address = await addAddress(username, address_line1, postcode, city)
+    res.status(201).send({address})
+    }
+  catch (err) {
+    next(err)
+  }
 }

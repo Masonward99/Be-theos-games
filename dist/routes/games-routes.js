@@ -10,9 +10,13 @@ gamesRouter.route('/')
     .get(GamesController_1.getGames)
     .post(GamesController_1.postGame);
 gamesRouter.route(`/:game_id`)
-    .get(GamesController_1.getGame);
+    .get(GamesController_1.getGame)
+    .delete(GamesController_1.deleteGame)
+    .patch(GamesController_1.patchGame);
 gamesRouter.route(`/:game_id/reviews`)
     .get(GamesController_1.getGameReviews);
 gamesRouter.route(`/:game_id/categories`)
-    .post();
+    .post(GamesController_1.postCategoriesToGame);
+gamesRouter.route(`/:game_id/categories/:category_name`)
+    .delete(GamesController_1.deleteCateogryFromGames);
 exports.default = gamesRouter;

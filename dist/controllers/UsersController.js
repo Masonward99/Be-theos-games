@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postUser = postUser;
 exports.login = login;
+exports.postAddress = postAddress;
 const UsersModels_1 = require("../modles/UsersModels");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const passportConfig_1 = __importDefault(require("../passportConfig"));
@@ -53,4 +54,24 @@ function login(req, res, next) {
             res.status(200).send({ userData });
         });
     })(req, res, next);
+}
+function postAddress(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let { username } = req.params;
+        if (!req.isAuthenticated()) {
+            console.log('not logged in');
+            return res.status(401).send('Need to login to use this endpoint');
+        }
+        const authUser = req.user;
+        if (!(username == authUser.username)) {
+            console.log('wrong user');
+            return res.status(403).send('Access denied');
+        }
+        // if (!username == req.user.username)
+        //   let { postcode, address_line1, city } = req.body
+        //   try {
+        //   }
+        //   catch (err) { next(err) }
+        res.status(200).send();
+    });
 }

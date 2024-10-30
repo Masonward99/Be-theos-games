@@ -155,3 +155,142 @@ describe('POST/api/games', () => {
         });
     }));
 });
+describe('DELETE/api/games/:game_id', () => {
+    it('Returns a 204 when given a valid id ', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/10').expect(204);
+    }));
+    it('Removes the game from the games table', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/10').expect(204);
+        let game = yield db_1.default.query('SELECT * FROM games WHERE game_id = 10');
+        expect(game.rows.length).toBe(0);
+    }));
+    it('Returns a 404 error if game_id does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/20').expect(404);
+    }));
+    it('Returns a 400 error if the game_id is not a number', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/cat').expect(400);
+    }));
+    it('Can delete games where other tables depend on the game_id', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/1').expect(204);
+    }));
+});
+describe('POST/api/games/game_id/categories', () => {
+    it('returns a 201 when categories are added', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default)
+            .post("/api/games/1/categories")
+            .send({ categories: ["party"] })
+            .expect(201);
+    }));
+    it('returns a body with the correct keys', () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(app_1.default).post('/api/games/1/categories').send({ categories: ["party"] }).expect(201);
+        expect(response.body.game).toEqual({
+            game_id: 1,
+            name: "Catan",
+            price: 3499,
+            stock: 20,
+            game_body: "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+            bgg_id: 123456,
+            average_review: "4.5000000000000000",
+            categories: ["family", "party", "strategy"],
+            num_reviews: "2",
+        });
+    }));
+    it('returns a 400 error if category name does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).post('/api/games/1/categories').send({ categories: 'hello' }).expect(400);
+    }));
+    it('Returns a 404 if game does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).post('/api/games/25/categories').send({ categories: 'family' }).expect(404);
+    }));
+    it('Returns a 400 error if game id is invalid', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).post('/api/games/cat/categories').send({ categories: 'family' }).expect(400);
+    }));
+    it('Can add multiple categories', () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(app_1.default)
+            .post("/api/games/1/categories")
+            .send({ categories: ["party", 'horror'] })
+            .expect(201);
+        expect(response.body.game).toEqual({
+            game_id: 1,
+            name: "Catan",
+            price: 3499,
+            stock: 20,
+            game_body: "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+            bgg_id: 123456,
+            average_review: "4.5000000000000000",
+            categories: ["family", "horror", "party", "strategy"],
+            num_reviews: "2",
+        });
+    }));
+});
+describe('delete/api/games/:game_id/categories/:category_name', () => {
+    it('returns a 204 when given a category and game that exists', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/1/categories/strategy').expect(204);
+    }));
+    it('returns a 404 erorr if game does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/25/categories/strategy').expect(404);
+    }));
+    it('returns a 404 error if category does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/1/categories/hello').expect(404);
+    }));
+    it('returns a 400 error if game_id is invalid', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete("/api/games/cat/categories/strategy").expect(400);
+    }));
+    it('delete the category from the game', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete("/api/games/1/categories/strategy").expect(204);
+        let game = yield db_1.default.query("SELECT * FROM games_categories WHERE game_id = 1;");
+        expect(game.rows.length).toBe(1);
+    }));
+});
+describe('PATCH/api/games/:game_id', () => {
+    it('returns a 200 if the request is valid', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).patch('/api/games/1').send({ inc_stock: 5, price: 7000 }).expect(200);
+    }));
+    it('returns the expected object', () => __awaiter(void 0, void 0, void 0, function* () {
+        let game = yield (0, supertest_1.default)(app_1.default)
+            .patch("/api/games/1")
+            .send({ inc_stock: 5, price: 7000 })
+            .expect(200);
+        expect(game.body.game).toEqual({
+            game_id: 1,
+            name: "Catan",
+            price: 7000,
+            stock: 25,
+            game_body: "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+            bgg_id: 123456,
+        });
+    }));
+    it('Can change the price', () => __awaiter(void 0, void 0, void 0, function* () {
+        let game = yield (0, supertest_1.default)(app_1.default)
+            .patch("/api/games/1")
+            .send({ price: 20000 })
+            .expect(200);
+        expect(game.body.game).toEqual({
+            game_id: 1,
+            name: "Catan",
+            price: 20000,
+            stock: 20,
+            game_body: "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+            bgg_id: 123456,
+        });
+    }));
+    it('Can change the stock', () => __awaiter(void 0, void 0, void 0, function* () {
+        let game = yield (0, supertest_1.default)(app_1.default)
+            .patch("/api/games/1")
+            .send({ inc_stock: 5 })
+            .expect(200);
+        expect(game.body.game).toEqual({
+            game_id: 1,
+            name: "Catan",
+            price: 3499,
+            stock: 25,
+            game_body: "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+            bgg_id: 123456,
+        });
+    }));
+    it('Returns an error if stock is negative after increment', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).patch('/api/games/1').send({ inc_stock: -100 }).expect(400);
+    }));
+    it('returns an error if price is negative', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).patch('/api/games/1').send({ price: -100 }).expect(400);
+    }));
+});

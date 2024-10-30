@@ -1,8 +1,5 @@
 import express from "express";
-import { login, postUser } from '../controllers/UsersController';
-
-
-
+import { login, postAddress, postUser } from '../controllers/UsersController';
 
 const userRouter = express.Router()
 
@@ -11,4 +8,7 @@ userRouter.route('/signup')
 
 userRouter.route('/login')
     .post(login)
+
+userRouter.route('/:username/addresses')
+    .post(postAddress)
 export default userRouter

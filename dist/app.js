@@ -33,8 +33,18 @@ app.use((err, req, res, next) => {
     }
 });
 app.use((err, req, res, next) => {
+    //primary key in use
     if (err.code == "23505") {
         res.status(409).send("Key already in use");
+    }
+    else {
+        next(err);
+    }
+});
+app.use((err, req, res, next) => {
+    //violates non-negative constraint
+    if (err.code == '23514') {
+        res.status(400).send('This value cannot be negative');
     }
     else {
         next(err);
@@ -50,6 +60,7 @@ app.use((err, req, res, next) => {
 });
 app.use((err, req, res, next) => {
     if (!err.message) {
+        console.log(err);
         next(err);
     }
     if (err.message == 'category does not exist') {

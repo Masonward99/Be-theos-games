@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { addCategoriesToGame, addGame, changeGame, findGame, findGameReviews, findGames, removeCategoryFromGame, removeGame } from "../modles/GamesModels";
-import { error } from "console";
+
 export function getGames(req: Request, res: Response, next: NextFunction) {
     findGames()
         .then(games => res.status(200).send({ games }))
         .catch(next)
 }
+
 export function getGame(req: Request, res: Response, next: NextFunction) {
     const id = req.params.game_id
     findGame(id)
@@ -76,7 +77,6 @@ export async function patchGame(req: Request, res: Response, next: NextFunction)
         res.status(200).send({game})
     }
     catch (err) {
-        console.log(err)
         next(err)
     }
     

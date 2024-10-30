@@ -35,7 +35,6 @@ passport_1.default.serializeUser((user, done) => {
     done(null, user.username);
 });
 passport_1.default.deserializeUser((username, done) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(username);
     try {
         const result = yield db_1.default.query("SELECT * FROM users WHERE username = $1", [
             username,

@@ -10,4 +10,6 @@ userRouter.route('/signup')
     .post(UsersController_1.postUser);
 userRouter.route('/login')
     .post(UsersController_1.login);
+userRouter.route('/:username/addresses')
+    .post(UsersController_1.postAddress);
 exports.default = userRouter;

@@ -70,10 +70,10 @@ const createTables = () => {
       .then(() =>
         db.query(`CREATE TABLE addresses (
         address_id SERIAL PRIMARY KEY,
-        is_default BOOL,
         postcode VARCHAR,
         city  VARCHAR,
-        user_id VARCHAR REFERENCES users(username));`)
+        address_line1 VARCHAR,
+        username VARCHAR REFERENCES users(username));`)
       )
       .then(() =>
         db.query(`CREATE TABLE orders (
@@ -91,7 +91,7 @@ const createTables = () => {
         author VARCHAR REFERENCES users(username),
         review_body TEXT,
         review_title VARCHAR,
-        created_at DATE)`)
+        created_at DATE);`)
       )
       .then(() =>
         db.query(`CREATE TABLE images (
@@ -113,7 +113,7 @@ const createTables = () => {
 }
 
 const addData = (data: SeedData) => {
-  const { games, categories, users, sleeves, gameCards, gameCategories, reviews } = data; 
+  const { games, categories, users, sleeves, gameCards, gameCategories, reviews, addresses} = data; 
   const insertGamesQueryStr = format(`INSERT INTO games (name, price, stock, game_body, bgg_id) VALUES %L;`, 
     games.map(({ name , price, stock, game_body, bgg_id }) => [name, price, stock, game_body, bgg_id])
   )
@@ -153,6 +153,12 @@ const addData = (data: SeedData) => {
       reviews.map(({entity_type, entity_id, rating, review_body, review_title, author, created_at})=> [entity_id, entity_type, rating, author, review_body, review_title, created_at])
       )
       return db.query(insertReviewsQueryStr)
+    })
+    .then(() => {
+      const insertAddressesQueryStr = format(`INSERT INTO addresses (postcode, city, address_line1, username) VALUES %L;`,
+      addresses.map(({ postcode, city, address_line1, username }) => [postcode, city, address_line1, username]))
+      return db.query(insertAddressesQueryStr)
+      
   })
 }
 
