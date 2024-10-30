@@ -135,7 +135,7 @@ describe('post/api/users/:username/addresses', () => {
           .send({ username: "Mw17", password: "1234" })
           .expect(200);
         //post address
-        await await agent.post("/api/users/Mw17/addresses")
+        await agent.post("/api/users/Mw17/addresses")
             .send({
                 postcode: "E1 6AN",
                 city: "London",
@@ -153,7 +153,7 @@ describe('post/api/users/:username/addresses', () => {
           .send({ username: "Mw17", password: "1234" })
           .expect(200);
         //post address
-        let address = await await agent.post("/api/users/Mw17/addresses")
+        let address =  await agent.post("/api/users/Mw17/addresses")
             .send({
                 postcode: "E1 6AN",
                 city: "London",
