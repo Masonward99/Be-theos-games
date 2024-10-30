@@ -3,6 +3,7 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
+import { categories } from "../db/data/test-data/categories";
 
 
 beforeEach(async () => await seed(testData))
@@ -165,5 +166,55 @@ describe('DELETE/api/games/:game_id', () => {
   })
   it('Can delete games where other tables depend on the game_id', async () => {
     await supertest(app).delete('/api/games/1').expect(204)
+  })
+})
+describe('POST/api/games/game_id/categories', () => {
+  it('returns a 201 when categories are added', async() => {
+    await supertest(app)
+      .post("/api/games/1/categories")
+      .send({ categories: ["party"] })
+      .expect(201);
+  })
+  it('returns a body with the correct keys', async () => {
+    let response = await supertest(app).post('/api/games/1/categories').send({ categories: ["party"] }).expect(201)
+    expect(response.body.game).toEqual({
+      game_id: 1,
+      name: "Catan",
+      price: 3499,
+      stock: 20,
+      game_body:
+        "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+      bgg_id: 123456,
+      average_review: "4.5000000000000000",
+      categories: ["family", "party", "strategy"],
+      num_reviews: "2",
+    });
+  })
+  it('returns a 400 error if category name does not exist', async() => {
+    await supertest(app).post('/api/games/1/categories').send({categories: 'hello'}).expect(400)
+  })
+  it('Returns a 404 if game does not exist', async () => {
+    await supertest(app).post('/api/games/25/categories').send({categories:'family'}).expect(404)
+  })
+  it('Returns a 400 error if game id is invalid', async () => {
+    await supertest(app).post('/api/games/cat/categories').send({categories:'family'}).expect(400)
+  })
+  it('Can add multiple categories', async() => {
+     let response = await supertest(app)
+       .post("/api/games/1/categories")
+       .send({ categories: ["party", 'horror'] })
+       .expect(201);
+     expect(response.body.game).toEqual({
+       game_id: 1,
+       name: "Catan",
+       price: 3499,
+       stock: 20,
+       game_body:
+         "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+       bgg_id: 123456,
+       average_review: "4.5000000000000000",
+       categories: ["family", "horror", "party", "strategy" ],
+       num_reviews: "2",
+     });
   })
 })

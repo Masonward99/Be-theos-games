@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addGame, findGame, findGameReviews, findGames, removeGame } from "../modles/GamesModels";
+import { addCategoriesToGame, addGame, findGame, findGameReviews, findGames, removeGame } from "../modles/GamesModels";
 import { error } from "console";
 export function getGames(req: Request, res: Response, next: NextFunction) {
     findGames()
@@ -38,6 +38,21 @@ export async function deleteGame(req:Request, res:Response, next:NextFunction) {
         res.status(204).send()
     }
     catch (err){
+        next(err)
+    }
+}
+
+export async function postCategoriesToGame(req:Request, res:Response, next:NextFunction) {
+    // accepts an body with a key of categories that is an array of category names
+    //adds all categories to the game
+    // sends the game with all its categories if succesful
+    const { categories } = req.body
+    const { game_id } = req.params
+    try {
+        let game = await addCategoriesToGame(categories, game_id)
+        res.status(201).send({game})
+    }
+    catch (err) {
         next(err)
     }
 }
