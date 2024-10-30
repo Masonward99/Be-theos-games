@@ -3,7 +3,6 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
-import { categories } from "../db/data/test-data/categories";
 
 
 beforeEach(async () => await seed(testData))
@@ -216,5 +215,27 @@ describe('POST/api/games/game_id/categories', () => {
        categories: ["family", "horror", "party", "strategy" ],
        num_reviews: "2",
      });
+  })
+})
+
+describe('delete/api/games/:game_id/categories/:category_name', () => {
+  it('returns a 204 when given a category and game that exists', async() => {
+    await supertest(app).delete('/api/games/1/categories/strategy').expect(204)
+  })
+  it('returns a 404 erorr if game does not exist', async () => {
+    await supertest(app).delete('/api/games/25/categories/strategy').expect(404)
+  })
+  it('returns a 404 error if category does not exist', async () => {
+    await supertest(app).delete('/api/games/1/categories/hello').expect(404)
+  })
+  it('returns a 400 error if game_id is invalid', async () => {
+    await supertest(app).delete("/api/games/cat/categories/strategy").expect(400);
+  })
+  it('delete the category from the game', async () => {
+    await supertest(app).delete("/api/games/1/categories/strategy").expect(204);
+    let game = await db.query(
+      "SELECT * FROM games_categories WHERE game_id = 1;"
+    );
+    expect(game.rows.length).toBe(1)
   })
 })
