@@ -50,6 +50,12 @@ interface SeedData {
     author: string;
     created_at: string;
   }[];
+  addresses: {
+    postcode: string,
+    address_line1: string,
+    username: string,
+    city:string
+  }[]
 }
 interface Game {
     game_id: string

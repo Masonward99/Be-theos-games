@@ -8,3 +8,8 @@ export  async function addUser(username: any, password: any, email: any, dob: an
     return data.rows[0]
 }
 
+export async function addAddress(username: any, address_line1:any, postcode:any, city:any) {
+    const address = await db.query("INSERT INTO addresses (username, address_line1, postcode, city) VALUES ($1,$2,$3,$4) RETURNING *;",
+        [username, address_line1, postcode, city])
+    return address.rows[0]
+}

@@ -102,3 +102,70 @@ describe(`POST/api/users/login`, () => {
         });
     })
 })
+describe('post/api/users/:username/addresses', () => {
+    const user = {
+      password: "1234",
+      username: "Mw17",
+      dob: "06/06/1999",
+      title: "Mr.",
+      first_name: "Mason",
+      last_name: "Ward",
+      email: "masonward99@hotmail.com",
+    };
+    it('returns a 401error if the user is not signed in', async () => {
+        let agent = supertest.agent(app)
+        await agent.post('/api/users/horrorfan/addresses').expect(401)
+    })
+    it('returns a 403 error if the users is signed in but isnt the same as the username', async () => {
+        let agent = supertest.agent(app)
+        //create user
+        await agent.post("/api/users/signup").send(user).expect(201);
+        //sign in
+        await agent.post("/api/users/login").send({ username: "Mw17", password: "1234" }).expect(200);
+        //post address
+        await agent.post("/api/users/horrorfan/addresses").expect(403)
+    })
+    it('returns a 201 when given the correct data', async() => {
+        let agent = supertest.agent(app);
+        //create user
+        await agent.post("/api/users/signup").send(user).expect(201);
+        //sign in
+        await agent
+          .post("/api/users/login")
+          .send({ username: "Mw17", password: "1234" })
+          .expect(200);
+        //post address
+        await await agent.post("/api/users/Mw17/addresses")
+            .send({
+                postcode: "E1 6AN",
+                city: "London",
+                address_line1: "22 Fleet Street",
+            })
+            .expect(201)
+    })
+    it('returns an address object correctly', async() => {
+        let agent = supertest.agent(app);
+        //create user
+        await agent.post("/api/users/signup").send(user).expect(201);
+        //sign in
+        await agent
+          .post("/api/users/login")
+          .send({ username: "Mw17", password: "1234" })
+          .expect(200);
+        //post address
+        let address = await await agent.post("/api/users/Mw17/addresses")
+            .send({
+                postcode: "E1 6AN",
+                city: "London",
+                address_line1: "22 Fleet Street",
+            })
+            .expect(201)
+        expect(address.body.address).toEqual({
+          postcode: "E1 6AN",
+          city: "London",
+          address_line1: "22 Fleet Street",
+          username: "Mw17",
+          address_id:19
+        });
+    })
+})

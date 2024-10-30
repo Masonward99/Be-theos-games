@@ -29,7 +29,6 @@ passport.serializeUser((user:any, done) => {
 });
 
 passport.deserializeUser(async (username, done) => {
-  console.log(username)
   try {
     const result = await db.query("SELECT * FROM users WHERE username = $1", [
       username,
