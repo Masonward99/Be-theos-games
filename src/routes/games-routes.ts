@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteCateogryFromGames, deleteGame, getGame, getGameReviews, getGames, postCategoriesToGame, postGame } from "../controllers/GamesController";
+import { deleteCateogryFromGames, deleteGame, getGame, getGameReviews, getGames, patchGame, postCategoriesToGame, postGame } from "../controllers/GamesController";
 const gamesRouter = express.Router();
 
 gamesRouter.route('/')
@@ -9,6 +9,7 @@ gamesRouter.route('/')
 gamesRouter.route(`/:game_id`)
     .get(getGame)
     .delete(deleteGame)
+    .patch(patchGame)
 
 gamesRouter.route(`/:game_id/reviews`)
     .get(getGameReviews)

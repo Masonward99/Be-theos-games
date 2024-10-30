@@ -239,3 +239,60 @@ describe('delete/api/games/:game_id/categories/:category_name', () => {
     expect(game.rows.length).toBe(1)
   })
 })
+
+describe('PATCH/api/games/:game_id', () => {
+  it('returns a 200 if the request is valid', async() => {
+    await supertest(app).patch('/api/games/1').send({inc_stock:5, price: 7000}).expect(200)
+  })
+  it('returns the expected object', async () => {
+    let game = await supertest(app)
+      .patch("/api/games/1")
+      .send({ inc_stock: 5, price: 7000 })
+      .expect(200);
+    expect(game.body.game).toEqual({
+      game_id: 1,
+      name: "Catan",
+      price: 7000,
+      stock: 25,
+      game_body:
+        "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+      bgg_id: 123456,
+    });
+  })
+  it('Can change the price', async() => {
+    let game = await supertest(app)
+      .patch("/api/games/1")
+      .send({  price: 20000 })
+      .expect(200);
+    expect(game.body.game).toEqual({
+      game_id: 1,
+      name: "Catan",
+      price: 20000,
+      stock: 20,
+      game_body:
+        "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+      bgg_id: 123456,
+    });
+  })
+  it('Can change the stock', async() => {
+    let game = await supertest(app)
+      .patch("/api/games/1")
+      .send({ inc_stock: 5 })
+      .expect(200);
+    expect(game.body.game).toEqual({
+      game_id: 1,
+      name: "Catan",
+      price: 3499,
+      stock: 25,
+      game_body:
+        "A strategy game where players collect resources and use them to build roads, settlements, and cities. Aim to become the dominant force on the island of Catan!",
+      bgg_id: 123456,
+    });
+  })
+  it('Returns an error if stock is negative after increment', async () => {
+    await supertest(app).patch('/api/games/1').send({inc_stock: -100}).expect(400)
+  })
+  it('returns an error if price is negative', async () => {
+   await supertest(app).patch('/api/games/1').send({price:-100}).expect(400)
+  })
+})
