@@ -56,3 +56,9 @@ export async function addGame(game: Game) {
     return insertedGame
     
 }
+
+export async function removeGame(id: any) {
+    await checkExists('games','game_id',[id])
+    let game = await db.query(`DELETE FROM games WHERE game_id = $1 RETURNING *`, [id])
+    return game.rows
+}

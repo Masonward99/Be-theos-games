@@ -3,7 +3,6 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
-import { categories } from "../db/data/test-data/categories";
 
 
 beforeEach(async () => await seed(testData))
@@ -146,5 +145,25 @@ describe('POST/api/games', () => {
       category_name: 'strategy',
       id:20
     })
+  })
+})
+
+describe('DELETE/api/games/:game_id', () => {
+  it('Returns a 204 when given a valid id ', async () => {
+    await supertest(app).delete('/api/games/10').expect(204)
+  })
+  it('Removes the game from the games table', async () => {
+    await supertest(app).delete('/api/games/10').expect(204)
+    let game = await db.query('SELECT * FROM games WHERE game_id = 10')
+    expect(game.rows.length).toBe(0)
+  })
+  it('Returns a 404 error if game_id does not exist', async () => {
+    await supertest(app).delete('/api/games/20').expect(404)
+  })
+  it('Returns a 400 error if the game_id is not a number', async() => {
+    await supertest(app).delete('/api/games/cat').expect(400)
+  })
+  it('Can delete games where other tables depend on the game_id', async () => {
+    await supertest(app).delete('/api/games/1').expect(204)
   })
 })

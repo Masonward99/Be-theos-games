@@ -53,11 +53,11 @@ const createTables = () => {
         card_name VARCHAR NOT NULL,
         height INT NOT NULL,
         width INT NOT NULL,
-        game_id INT NOT NULL REFERENCES games(game_id),
+        game_id INT NOT NULL REFERENCES games(game_id) ON DELETE CASCADE,
         qty INT NOT NULL);`))
         .then(() => db_1.default.query(`CREATE TABLE games_categories (
         id SERIAL PRIMARY KEY,
-        game_id INT REFERENCES games(game_id),
+        game_id INT REFERENCES games(game_id) ON DELETE CASCADE,
         category_name VARCHAR REFERENCES categories(category_name));`))
         .then(() => db_1.default.query(`CREATE TABLE addresses (
         address_id SERIAL PRIMARY KEY,
