@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteGame, getGame, getGameReviews, getGames, postCategoriesToGame, postGame } from "../controllers/GamesController";
+import { deleteCateogryFromGames, deleteGame, getGame, getGameReviews, getGames, postCategoriesToGame, postGame } from "../controllers/GamesController";
 const gamesRouter = express.Router();
 
 gamesRouter.route('/')
@@ -15,5 +15,8 @@ gamesRouter.route(`/:game_id/reviews`)
 
 gamesRouter.route(`/:game_id/categories`)
     .post(postCategoriesToGame)
+
+gamesRouter.route(`/:game_id/categories/:category_name`)
+    .delete(deleteCateogryFromGames)
 
 export default gamesRouter

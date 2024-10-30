@@ -55,6 +55,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 })
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (!err.message) {
+    console.log(err)
      next(err)
   }
   if (err.message == 'category does not exist') {

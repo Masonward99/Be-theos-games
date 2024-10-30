@@ -64,3 +64,12 @@ export async function addCategoriesToGame(categories: string[], game_id: any) {
     let game:any = await addAllCategoriesToGames(categories, game_id)
     return game.rows[0]
 }
+
+export async function removeCategoryFromGame(game_id: any, category_name: any) {
+    console.log(game_id, category_name)
+    await checkExists('games', 'game_id', [game_id])
+    await checkExists('categories', 'category_name', [category_name])
+    let res = await db.query("DELETE FROM games_categories WHERE game_id = $1 AND category_name = $2 RETURNING *;", [game_id, category_name]) 
+    console.log(res)
+    return res
+}

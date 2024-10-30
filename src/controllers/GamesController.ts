@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addCategoriesToGame, addGame, findGame, findGameReviews, findGames, removeGame } from "../modles/GamesModels";
+import { addCategoriesToGame, addGame, findGame, findGameReviews, findGames, removeCategoryFromGame, removeGame } from "../modles/GamesModels";
 import { error } from "console";
 export function getGames(req: Request, res: Response, next: NextFunction) {
     findGames()
@@ -51,6 +51,18 @@ export async function postCategoriesToGame(req:Request, res:Response, next:NextF
     try {
         let game = await addCategoriesToGame(categories, game_id)
         res.status(201).send({game})
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+export async function deleteCateogryFromGames(req:Request, res:Response, next:NextFunction) {
+    const { game_id, category_name } = req.params
+    console.log(game_id, category_name)
+    try {
+         await removeCategoryFromGame(game_id, category_name)
+        res.status(204).send()
     }
     catch (err) {
         next(err)
