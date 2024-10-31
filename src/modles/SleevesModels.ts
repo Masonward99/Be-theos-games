@@ -1,5 +1,5 @@
 import db from "../db";
-import { checkExists } from "../utils";
+import { checkExists, deleteEntityReviews } from "../utils";
 
 export async function findSleeves() {
   let sleeves = await db.query(`SELECT sleeves.*, avg(reviews.rating) AS average_review, count(reviews.rating) AS num_reviews
@@ -29,5 +29,12 @@ export async function findSleeve(id: any) {
      ;`,
     [id]
   );
+  return sleeve.rows[0]
+}
+
+export async function removeSleeve(id: any) {
+  await checkExists('sleeves', 'sleeve_id', [id])
+  let sleeve = await db.query('DELETE FROM sleeves WHERE sleeve_id = $1 RETURNING *', [id])
+  await deleteEntityReviews(id, 'sleeves')
   return sleeve.rows[0]
 }

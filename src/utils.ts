@@ -40,3 +40,8 @@ export async function addAllCategoriesToGames(categories: string[], game_id: num
           GROUP BY games.game_id ;`, [game_id]);
   return game
 }
+
+export async function deleteEntityReviews(entity_id:any, entity_type:any) {
+  let res = await db.query(`DELETE FROM reviews WHERE(entity_type= $1 AND entity_id = $2)`, [entity_type, entity_id])
+  return res
+}
