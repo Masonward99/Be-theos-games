@@ -45,6 +45,14 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     next(err)
   }
 });
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  //username doesnt exist
+  if (err.code == "23503") {
+    res.status(400).send("User does not exist")
+  } else {
+    next(err)
+  }
+})
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   //violates non-negative constraint

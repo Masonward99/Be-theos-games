@@ -149,3 +149,39 @@ describe('GET/api/sleeves/:sleeve_id/reviews', () => {
     await supertest(app).get('/api/sleeves/cat/reviews').expect(400)
   })
 })
+
+describe("POST/api/sleeves/:sleeve_id/reviews", () => {
+  const review = {
+    rating: 4,
+    review_title: 'a review',
+    review_body: 'This is a good review',
+    created_at: '2024/06/06',
+    author: 'econwizard'
+  }
+  it("Returns a 201 when give the correct data", async () => {
+    await supertest(app).post('/api/sleeves/1/reviews').send(review).expect(201)
+  })
+  it("Returns the created review", async () => {
+    let res = await supertest(app).post('/api/sleeves/1/reviews').send(review).expect(201)
+    expect(res.body.review).toEqual({
+      rating: 4,
+      review_title: "a review",
+      review_body: "This is a good review",
+      created_at: "2024-06-05T23:00:00.000Z",
+      author: "econwizard",
+      entity_id: 1,
+      entity_type: 'sleeves',
+      review_id:23
+    });
+  })
+  it('returns a 404 error if review does not exist', async () => {
+    await supertest(app).post('/api/sleeves/20/reviews').send(review).expect(404)
+  })
+  it('returns a 400 error if given a invalid id', async () => {
+    await supertest(app).post('/api/sleeves/cat/reviews').send(review).expect(400)
+  })
+  it('returns a 400 error if author does not exist', async () => {
+    review.author = 'mason';
+    await supertest(app).post('/api/sleeves/1/reviews').send(review).expect(400)
+  })
+})
