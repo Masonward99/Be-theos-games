@@ -92,3 +92,24 @@ describe("GET/api/sleeves/:sleeve_id", () => {
     await supertest(app).get('/api/sleeves/cat').expect(400)
   })
 })
+
+describe('DELETE /api/sleeves/:sleeve_id', () => {
+  it('Returns a 204 when given a valid id', async() => {
+    await supertest(app).delete('/api/sleeves/1').expect(204)
+  })
+  it('Deletes the sleeve at that id', async () => {
+    await supertest(app).delete('/api/sleeves/1').expect(204)
+    await supertest(app).get('/api/sleeves/1').expect(404)
+  })
+  it("Deletes all reviews on that sleeve", async () => {
+    await supertest(app).delete('/api/sleeves/1').expect(204)
+    let res = await db.query(`SELECT * FROM reviews WHERE (entity_type = 'sleeves' AND entity_id = 1)`)
+    expect(res.rows.length).toBe(0)
+  })
+  it("returns 404 if id doesnt exist", async () => {
+    await supertest(app).delete('/api/sleeves/40').expect(404)
+  })
+  it('returns a 400 for a invalid id', async () => {
+    await supertest(app).delete('/api/sleeves/cat').expect(400)
+  })
+})

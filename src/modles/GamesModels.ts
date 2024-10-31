@@ -1,6 +1,6 @@
 import { error } from "console";
 import db from "../db";
-import { addAllCategoriesToGames, checkAllCategoriesExist, checkCategoryInUse, checkExists } from "../utils";
+import { addAllCategoriesToGames, checkAllCategoriesExist, checkCategoryInUse, checkExists, deleteEntityReviews } from "../utils";
 
 export function findGames() {
     return db.query(`SELECT games.*, avg(reviews.rating) AS average_review, count(reviews.rating) AS num_reviews FROM games LEFT JOIN reviews ON (games.game_id = reviews.entity_id AND reviews.entity_type = 'games') GROUP BY games.game_id;`)
@@ -55,6 +55,7 @@ export async function addGame(game: Game) {
 export async function removeGame(id: any) {
     await checkExists('games','game_id',[id])
     let game = await db.query(`DELETE FROM games WHERE game_id = $1 RETURNING *`, [id])
+    await deleteEntityReviews(id, 'games')
     return game.rows
 }
 
