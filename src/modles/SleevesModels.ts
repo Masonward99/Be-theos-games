@@ -44,3 +44,14 @@ export async function findSleeveReviews(id: any) {
   let reviews = await db.query(`SELECT * FROM reviews WHERE (entity_type = 'sleeves' AND entity_id = $1);`, [id])
   return reviews.rows
 }
+
+export async function addSleeveReview(id: any, rating: any, author: any, body: any, created_at: any, review_title: any) {
+  await checkExists('sleeves', 'sleeve_id', [id])
+  let review = await db.query(`INSERT INTO reviews 
+    (entity_type, entity_id, rating, author, review_body, review_title, created_at)
+    VALUES('sleeves', $1,$2,$3,$4,$5, $6)
+    RETURNING *;`,
+    [id, rating, author, body, review_title, created_at])
+  return review.rows[0]
+  
+}
