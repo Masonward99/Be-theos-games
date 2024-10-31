@@ -3,7 +3,6 @@ import { seed } from '../db/Seed/seed'
 import { testData } from '../db/data/test-data/test-data'
 import app from '../app'
 import db from '../db'
-import { reviews } from '../db/data/test-data/reviews'
 
 beforeEach(async () => await seed(testData))
 afterAll(() => db.end())
@@ -111,5 +110,42 @@ describe('DELETE /api/sleeves/:sleeve_id', () => {
   })
   it('returns a 400 for a invalid id', async () => {
     await supertest(app).delete('/api/sleeves/cat').expect(400)
+  })
+})
+
+describe('GET/api/sleeves/:sleeve_id/reviews', () => {
+  it('Returns a 200 when give a valid id', async () => {
+    await supertest(app).get('/api/sleeves/2/reviews').expect(200)
+  })
+  it('Returns an array of the correct length', async () => {
+    let res = await supertest(app).get('/api/sleeves/1/reviews').expect(200)
+    expect(res.body.reviews.length).toBe(2)
+  })
+  it('Returns an empty array if there are no reviews', async () => {
+    let res = await supertest(app).get('/api/sleeves/10/reviews').expect(200)
+    expect(res.body.reviews).toEqual([])
+  })
+  it('Returns an array with correct keys', async () => {
+    let res = await supertest(app).get('/api/sleeves/1/reviews').expect(200)
+    res.body.reviews.every((review: any) =>
+      expect(review).toEqual(
+        expect.objectContaining({
+          entity_type: expect.any(String),
+          entity_id: expect.any(Number),
+          rating: expect.any(Number),
+          review_id: expect.any(Number),
+          author: expect.any(String),
+          review_body: expect.any(String),
+          review_title: expect.any(String),
+          created_at: expect.any(String),
+        })
+      )
+    );
+  })
+  it('Returns a 404 if sleeve_id doesnt exist', async () => {
+    await supertest(app).get('/api/sleeves/20/reviews').expect(404)
+  })
+  it('Returns a 400 error if sleeve id is invalid', async () => {
+    await supertest(app).get('/api/sleeves/cat/reviews').expect(400)
   })
 })
