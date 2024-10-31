@@ -3,6 +3,7 @@ import { seed } from '../db/Seed/seed'
 import { testData } from '../db/data/test-data/test-data'
 import app from '../app'
 import db from '../db'
+import { reviews } from '../db/data/test-data/reviews'
 
 beforeEach(async () => await seed(testData))
 afterAll(() => db.end())
@@ -61,5 +62,33 @@ describe("POST/api/sleeves", () => {
   it('Returns a 400 error if a value is missing', async () => {
     delete sleeve['width']
     await supertest(app).post('/api/sleeves').send(sleeve).expect(400)
+  })
+})
+
+describe("GET/api/sleeves/:sleeve_id", () => {
+  it('Returns a 201 when given a valid id', async () => {
+    await supertest(app).get('/api/sleeves/10').expect(200)
+  })
+  it('Returns a sleeve object including the average reviews', async () => {
+    let res = await supertest(app).get('/api/sleeves/10').expect(200)
+    expect(res.body.sleeve).toEqual({
+      sleeve_name: "Eco-Friendly Sleeves",
+      price: 499,
+      stock: 70,
+      height: 88,
+      width: 63,
+      pack_size: 100,
+      description:
+        "Biodegradable sleeves made from eco-friendly materials, offering protection while reducing environmental impact.",
+      num_reviews: '0',
+      average_review: null,
+      sleeve_id:10
+    });
+  })
+  it('returns a 404 if id is valid but doesnt exist', async () => {
+    await supertest(app).get('/api/sleeves/11').expect(404)
+  })
+  it('returns a 400 error if id is not a number', async () => {
+    await supertest(app).get('/api/sleeves/cat').expect(400)
   })
 })
