@@ -38,3 +38,9 @@ export async function removeSleeve(id: any) {
   await deleteEntityReviews(id, 'sleeves')
   return sleeve.rows[0]
 }
+
+export async function findSleeveReviews(id: any) {
+  await checkExists('sleeves', 'sleeve_id', [id])
+  let reviews = await db.query(`SELECT * FROM reviews WHERE (entity_type = 'sleeves' AND entity_id = $1);`, [id])
+  return reviews.rows
+}

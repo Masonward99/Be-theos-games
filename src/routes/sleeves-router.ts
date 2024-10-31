@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteSleeve, getSleeve, getSleeves, postSleeve } from '../controllers/SleevesControllers'
+import { deleteSleeve, getSleeve, getSleeveReviews, getSleeves, postSleeve } from '../controllers/SleevesControllers'
 
 const sleevesRouter = express.Router()
 
@@ -10,5 +10,8 @@ sleevesRouter.route('/')
 sleevesRouter.route('/:sleeve_id')
   .get(getSleeve)
   .delete(deleteSleeve)
+
+sleevesRouter.route('/:sleeve_id/reviews')
+  .get(getSleeveReviews)
 
 export default sleevesRouter

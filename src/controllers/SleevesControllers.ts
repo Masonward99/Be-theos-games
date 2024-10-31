@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addSleeve, findSleeve, findSleeves, removeSleeve } from "../modles/SleevesModels";
+import { addSleeve, findSleeve, findSleeveReviews, findSleeves, removeSleeve } from "../modles/SleevesModels";
 
 export async function getSleeves(req: Request, res: Response, next: NextFunction) {
   try {
@@ -40,6 +40,19 @@ export async function deleteSleeve(req: Request, res: Response, next: NextFuncti
     res.status(204).send()
   }
   catch (err) {
+    next(err)
+  }
+}
+
+export async function getSleeveReviews(req: Request, res: Response, next:NextFunction) {
+  const { sleeve_id } = req.params
+  
+  try {
+    let reviews = await findSleeveReviews(sleeve_id)
+    res.status(200).send({reviews})
+  }
+  catch (err) {
+    console.log(err)
     next(err)
   }
 }
