@@ -34,13 +34,13 @@ const createTables = () => {
       .then(() =>
         db.query(`CREATE TABLE sleeves (
         sleeve_id SERIAL PRIMARY KEY,
-        sleeve_name VARCHAR,
-        price INT,
-        stock INT,
-        height INT,
-        width INT,
-        pack_size INT,
-        description TEXT);`)
+        sleeve_name VARCHAR NOT NULL,
+        price INT NOT NULL,
+        stock INT NOT NULL,
+        height INT NOT NULL,
+        width INT NOT NULL,
+        pack_size INT NOT NULL,
+        description TEXT NOT NULL);`)
       )
       .then(() =>
         db.query(`CREATE TABLE users (

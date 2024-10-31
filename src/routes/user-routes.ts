@@ -11,4 +11,5 @@ userRouter.route('/login')
 
 userRouter.route('/:username/addresses')
     .post(postAddress)
+    
 export default userRouter
