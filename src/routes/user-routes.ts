@@ -1,5 +1,5 @@
 import express from "express";
-import { login, postAddress, postUser } from '../controllers/UsersController';
+import { login, logout, postAddress, postUser } from '../controllers/UsersController';
 
 const userRouter = express.Router()
 
@@ -9,6 +9,8 @@ userRouter.route('/signup')
 userRouter.route('/login')
     .post(login)
 
+userRouter.route('/logout')
+    .get(logout)
 userRouter.route('/:username/addresses')
     .post(postAddress)
     

@@ -53,3 +53,12 @@ export async function postAddress(req: Request, res: Response, next: NextFunctio
     next(err)
   }
 }
+
+export async function logout(req: Request, res: Response, next: NextFunction) {
+    req.logout( (err)=> {
+      if(err) {
+       return  next(err)
+      }
+      res.status(200).send('Logout succesful')
+    })
+}
