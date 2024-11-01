@@ -71,6 +71,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
 })
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.log(err)
   if (!err.message) {
     console.log(err)
      next(err)
@@ -80,4 +81,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
  })
 
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+   res.status(500).send('Internal server error')
+ })
 export default app

@@ -169,3 +169,35 @@ describe('post/api/users/:username/addresses', () => {
         });
     })
 })
+
+describe('/api/users/logout', () => {
+    const user = {
+      password: "1234",
+      username: "Mw17",
+      dob: "06/06/1999",
+      title: "Mr.",
+      first_name: "Mason",
+      last_name: "Ward",
+      email: "masonward99@hotmail.com",
+    };
+    it('Returns a 200 if it succefully logs out a user', async () => {
+        let agent = supertest.agent(app)
+        await agent.post('/api/users/signup').send(user).expect(201)
+        await agent.post('/api/users/login').send({ username: 'Mw17', password: '1234' }).expect(200)
+        await agent.get('/api/users/logout').expect(200)
+    })
+    it('user is no longer logged in', async () => {
+        let agent = supertest.agent(app);
+        await agent.post("/api/users/signup").send(user).expect(201);
+        await agent
+          .post("/api/users/login")
+          .send({ username: "Mw17", password: "1234" })
+          .expect(200);
+        await agent.get("/api/users/logout").expect(200);
+        await agent.post("/api/users/Mw17/addresses").send({
+          postcode: "E1 6AN",
+          city: "London",
+          address_line1: "22 Fleet Street",
+        }).expect(401)
+    })
+})
