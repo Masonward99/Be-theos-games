@@ -9,7 +9,7 @@ exports.users = [
         dob: "1990-05-15",
         email: "alex.smith@example.com",
         title: "Mr.",
-        password: "1234",
+        password: "$2a$10$mJpICHqT1EJeKyU5equcWuPFs6Uysm.UMJVVtOjoLbMxKJeqiWi4C",
     },
     {
         username: "familygamer",
@@ -17,7 +17,7 @@ exports.users = [
         last_name: "Doe",
         dob: "1985-10-22",
         email: "jamie.doe@example.com",
-        password: "1234",
+        password: "$2a$10$mJpICHqT1EJeKyU5equcWuPFs6Uysm.UMJVVtOjoLbMxKJeqiWi4C",
         title: "Mrs.",
     },
     {
@@ -26,7 +26,7 @@ exports.users = [
         last_name: "Johnson",
         dob: "1992-07-30",
         email: "taylor.johnson@example.com",
-        password: "1234",
+        password: "$2a$10$mJpICHqT1EJeKyU5equcWuPFs6Uysm.UMJVVtOjoLbMxKJeqiWi4C",
         title: "Ms.",
     },
     {

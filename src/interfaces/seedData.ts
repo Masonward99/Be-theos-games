@@ -54,7 +54,18 @@ interface SeedData {
     postcode: string,
     address_line1: string,
     username: string,
-    city:string
+    city: string
+  }[];
+  orders: {
+    username: string,
+    date: string,
+    address_id: number
+  }[];
+  orderItems: {
+    name: string,
+    qty: number,
+    price: number,
+    order_id:number
   }[]
 }
 interface Game {

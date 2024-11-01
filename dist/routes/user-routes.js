@@ -10,6 +10,14 @@ userRouter.route('/signup')
     .post(UsersController_1.postUser);
 userRouter.route('/login')
     .post(UsersController_1.login);
+userRouter.route('/logout')
+    .get(UsersController_1.logout);
+userRouter.use('/:username', UsersController_1.isUserAuthenticated);
 userRouter.route('/:username/addresses')
-    .post(UsersController_1.postAddress);
+    .post(UsersController_1.postAddress)
+    .get(UsersController_1.getAddresses);
+userRouter.route('/:username/addresses/:review_id')
+    .delete(UsersController_1.deleteAddress);
+userRouter.route(`/:username/orders`)
+    .post(UsersController_1.postOrder);
 exports.default = userRouter;

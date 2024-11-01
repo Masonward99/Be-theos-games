@@ -71,9 +71,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
 })
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err)
   if (!err.message) {
-    console.log(err)
      next(err)
   }
   if (err.message == 'category does not exist') {
@@ -81,6 +79,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
   if (err.message == 'Address_id does not exist') {
     res.status(404).send(err.message)
+  }
+  if (err.message == 'Not enough stock for this order') {
+    res.status(400).send(err.message)
   }
  })
 

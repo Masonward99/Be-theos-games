@@ -8,6 +8,7 @@ const db_1 = __importDefault(require("../db"));
 const games_routes_1 = __importDefault(require("./games-routes"));
 const user_routes_1 = __importDefault(require("./user-routes"));
 const categories_router_1 = __importDefault(require("./categories-router"));
+const sleeves_router_1 = __importDefault(require("./sleeves-router"));
 const apiRouter = express_1.default.Router();
 apiRouter.get('/', (req, res) => {
     db_1.default.query(`SELECT * FROM games;`);
@@ -16,4 +17,5 @@ apiRouter.get('/', (req, res) => {
 apiRouter.use('/games', games_routes_1.default);
 apiRouter.use('/users', user_routes_1.default);
 apiRouter.use(`/categories`, categories_router_1.default);
+apiRouter.use('/sleeves', sleeves_router_1.default);
 exports.default = apiRouter;
