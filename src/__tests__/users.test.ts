@@ -5,6 +5,7 @@ import app from "../app";
 import db from "../db";
 import exp from "constants";
 import { sleeves } from "../db/data/test-data/sleeves";
+import { exec } from "child_process";
 
 
 beforeEach(async () =>await seed(testData));
@@ -292,7 +293,7 @@ describe('GET/api/users/:username/reviews', () => {
     })
 });
 
-describe.only('POST/api/users/:username/orders', () => {
+describe('POST/api/users/:username/orders', () => {
     it('returns a 201 when given correct data', async () => {
         let agent = supertest.agent(app)
         await agent.post('/api/users/login').send({ username: 'familygamer', password: '1234' }).expect(200)
@@ -376,5 +377,32 @@ describe.only('POST/api/users/:username/orders', () => {
              { id: 2, qty: 1 },
            ],
          }).expect(400)
+    })
+})
+
+describe.only('GET/api/users/:username/orders', () => {
+    it('returns an array of correct length', async () => {
+        let agent = supertest.agent(app);
+        await agent.post("/api/users/login").send({ username: "coopstrategist", password: "1234" }).expect(200);
+        let res = await agent.get("/api/users/coopstrategist/orders").expect(200);
+        expect(res.body.orders.length).toBe(1)
+    })
+    it('Each element of array has correct keys', async () => {
+        let agent = supertest.agent(app);
+        await agent
+          .post("/api/users/login")
+          .send({ username: "familygamer", password: "1234" })
+          .expect(200);
+        let res = await agent
+          .get("/api/users/familygamer/orders")
+          .expect(200);
+        expect(res.body.orders.length).toBe(2)
+        res.body.orders.every((order:any) => expect(order).toEqual(expect.objectContaining({
+            address_id: expect.any(Number),
+            username: expect.any(String),
+            num_items: expect.any(String),
+            total_price: expect.any(String),
+            order_id:expect.any(Number)
+        })))
     })
 })
