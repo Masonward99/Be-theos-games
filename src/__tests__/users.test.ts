@@ -3,7 +3,7 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
-import bcrypt from 'bcryptjs'
+import exp from "constants";
 
 
 beforeEach(async () =>await seed(testData));
@@ -241,3 +241,52 @@ describe("DELETE/api/users/:username/reviews/:review_id", () => {
            .expect(404);
     })
 })
+
+describe('GET/api/users/:username/reviews', () => {
+    it('Returns a 200 when given a valid username', async () => {
+        let agent = supertest.agent(app)
+        await agent
+          .post("/api/users/login")
+          .send({ username: "coopstrategist", password: "1234" })
+            .expect(200);
+        await agent.get('/api/users/coopstrategist/addresses').expect(200)
+    })
+    it('returns an array of the correct length', async () => {
+         let agent = supertest.agent(app);
+         await agent
+           .post("/api/users/login")
+           .send({ username: "coopstrategist", password: "1234" })
+           .expect(200);
+        let res = await agent.get("/api/users/coopstrategist/addresses").expect(200);
+        expect(res.body.addresses.length).toBe(2)
+    })
+    it('each address has the correct keys', async () => {
+        let agent = supertest.agent(app);
+        await agent
+          .post("/api/users/login")
+          .send({ username: "coopstrategist", password: "1234" })
+          .expect(200);
+        let res = await agent
+          .get("/api/users/coopstrategist/addresses")
+            .expect(200)
+        res.body.addresses.every((address: any) => expect(address).toEqual(expect.objectContaining({
+            address_line1: expect.any(String),
+            postcode: expect.any(String),
+            city: expect.any(String),
+            username: expect.any(String),
+            address_id:expect.any(Number)
+        })))
+    })
+    it('returns a 401 when not signed in', async () => {
+        let agent = supertest.agent(app)
+        await agent.get('/api/users/coopstrategist/addresses').expect(401)
+    })
+    it('returns a 403 if logged in to a different user', async () => {
+        let agent = supertest.agent(app);
+        await agent
+          .post("/api/users/login")
+          .send({ username: "familygamer", password: "1234" })
+          .expect(200);
+        await agent.get("/api/users/coopstrategist/addresses").expect(403);
+    })
+});

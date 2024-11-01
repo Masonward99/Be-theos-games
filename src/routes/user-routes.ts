@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteAddress, login, logout, postAddress, postUser } from '../controllers/UsersController';
+import { deleteAddress, getAddresses, login, logout, postAddress, postUser } from '../controllers/UsersController';
 
 const userRouter = express.Router()
 
@@ -14,6 +14,7 @@ userRouter.route('/logout')
 
 userRouter.route('/:username/addresses')
     .post(postAddress)
+    .get(getAddresses)
     
 userRouter.route('/:username/addresses/:review_id')
     .delete(deleteAddress)

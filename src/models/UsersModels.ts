@@ -22,3 +22,8 @@ export async function removeAddress(id: any, username:any) {
     }
     return address.rows[0]
 }
+
+export async function findAddresses(username: any) {
+    const addresses = await db.query("SELECT * FROM addresses WHERE username = $1", [username])
+    return addresses.rows
+}
