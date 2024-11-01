@@ -13,3 +13,12 @@ export async function addAddress(username: any, address_line1:any, postcode:any,
         [username, address_line1, postcode, city])
     return address.rows[0]
 }
+
+export async function removeAddress(id: any, username:any) {
+    const address = await db.query('DELETE FROM addresses WHERE (username = $1 AND address_id = $2) RETURNING *;',
+        [username, id])
+    if (address.rows.length == 0) {
+        throw new Error('Address_id does not exist')
+    }
+    return address.rows[0]
+}

@@ -3,10 +3,21 @@ import { seed } from "../db/Seed/seed";
 import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
+import bcrypt from 'bcryptjs'
 
 
 beforeEach(async () =>await seed(testData));
 afterAll(() => db.end());
+
+const user = {
+  password: "1234",
+  username: "Mw17",
+  dob: "06/06/1999",
+  title: "Mr.",
+  first_name: "Mason",
+  last_name: "Ward",
+  email: "masonward99@hotmail.com",
+};
 
 describe('POST/api/users/signup', () => {
     const user = {
@@ -171,15 +182,7 @@ describe('post/api/users/:username/addresses', () => {
 })
 
 describe('/api/users/logout', () => {
-    const user = {
-      password: "1234",
-      username: "Mw17",
-      dob: "06/06/1999",
-      title: "Mr.",
-      first_name: "Mason",
-      last_name: "Ward",
-      email: "masonward99@hotmail.com",
-    };
+    
     it('Returns a 200 if it succefully logs out a user', async () => {
         let agent = supertest.agent(app)
         await agent.post('/api/users/signup').send(user).expect(201)
@@ -199,5 +202,42 @@ describe('/api/users/logout', () => {
           city: "London",
           address_line1: "22 Fleet Street",
         }).expect(401)
+    })
+})
+
+describe("DELETE/api/users/:username/reviews/:review_id", () => {
+    it('Returns a 204 when given a valid id ', async () => {
+        let agent = supertest.agent(app)
+        await agent.post('/api/users/login').send({ username: 'coopstrategist', password: '1234' }).expect(200)
+        await agent.delete("/api/users/coopstrategist/addresses/5").expect(204);
+    })
+    it("Returns a 401 error if not signed in", async () => {
+        let agent = supertest.agent(app)
+        await agent.delete("/api/users/coopstrategist/addresses/5").expect(401);
+    })
+    it("returns a 403 if signed in to a different user", async () => {
+        let agent = supertest.agent(app)
+        await agent.post('/api/users/login').send({ username: 'familygamer', password: '1234' }).expect(200)
+        await agent.delete("/api/users/coopstrategist/addresses/5").expect(403);
+    })
+    it("deletes the review with that id", async () => {
+        let agent = supertest.agent(app)
+        await agent
+          .post("/api/users/login")
+          .send({ username: "coopstrategist", password: "1234" })
+          .expect(200);
+        await agent.delete("/api/users/coopstrategist/addresses/5").expect(204)
+        let res = await db.query('SELECT * FROM addresses WHERE address_id = 5')
+        expect(res.rows.length).toBe(0)
+    })
+    it('returns a 404 error if review does not exist on that user', async () => {
+         let agent = supertest.agent(app);
+         await agent
+           .post("/api/users/login")
+           .send({ username: "coopstrategist", password: "1234" })
+           .expect(200);
+         await agent
+           .delete("/api/users/coopstrategist/addresses/1")
+           .expect(404);
     })
 })
