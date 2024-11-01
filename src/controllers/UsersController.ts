@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { addAddress, addUser, findAddresses, removeAddress } from "../models/UsersModels";
+import { addAddress, addOrder, addUser, findAddresses, removeAddress } from "../models/UsersModels";
 import bcrypt from "bcryptjs";
 import passport from "../passportConfig";
 
@@ -104,4 +104,16 @@ export async function isUserAuthenticated(req: Request, res: Response, next: Nex
     return res.status(403).send("Access denied");
   }
   next()
+}
+
+export async function postOrder(req: Request, res: Response, next: NextFunction) {
+  let { username } = req.params;
+  let { games, sleeves, address_id, date } = req.body
+  try {
+    let order = await addOrder(username, games, sleeves, address_id, date)
+    res.status(201).send({order})
+  }
+  catch (err) {
+    next(err)
+  }
 }

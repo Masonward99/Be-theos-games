@@ -16,6 +16,7 @@ exports.checkCategoryInUse = exports.checkExists = void 0;
 exports.checkAllCategoriesExist = checkAllCategoriesExist;
 exports.addAllCategoriesToGames = addAllCategoriesToGames;
 exports.deleteEntityReviews = deleteEntityReviews;
+exports.insertOrderItems = insertOrderItems;
 const db_1 = __importDefault(require("./db"));
 const pg_format_1 = __importDefault(require("pg-format"));
 const checkExists = (tableName, columnName, valueArray) => __awaiter(void 0, void 0, void 0, function* () {
@@ -59,5 +60,15 @@ function deleteEntityReviews(entity_id, entity_type) {
     return __awaiter(this, void 0, void 0, function* () {
         let res = yield db_1.default.query(`DELETE FROM reviews WHERE(entity_type= $1 AND entity_id = $2)`, [entity_type, entity_id]);
         return res;
+    });
+}
+function insertOrderItems(order_id, item_array, item_type) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(item_array);
+        // get an array of order item objects including name price and qty
+        item_array.map((item) => __awaiter(this, void 0, void 0, function* () {
+            let res = yield db_1.default.query("SELECT * FROM $1 WHERE $2;", [item_type, item.id]);
+            console.log(res.rows[0][item_type == 'games' ? 'game_name' : 'sleeve_name']);
+        }));
     });
 }

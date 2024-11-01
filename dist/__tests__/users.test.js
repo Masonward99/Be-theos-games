@@ -293,3 +293,14 @@ describe('GET/api/users/:username/reviews', () => {
         yield agent.get("/api/users/coopstrategist/addresses").expect(403);
     }));
 });
+describe.only('POST/api/users/:username/orders', () => {
+    it('returns a 201 when given correct data', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.post('/api/users/login').send({ username: 'familygamer', password: '1234' }).expect(200);
+        agent.post('/api/users/familygamer/orders').send({
+            date: '06/06/2024',
+            address_id: 3,
+            games: [{ id: 1, qty: 3 }, { id: 2, qty: 1 }]
+        }).expect(201);
+    }));
+});

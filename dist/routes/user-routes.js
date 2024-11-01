@@ -18,4 +18,6 @@ userRouter.route('/:username/addresses')
     .get(UsersController_1.getAddresses);
 userRouter.route('/:username/addresses/:review_id')
     .delete(UsersController_1.deleteAddress);
+userRouter.route(`/:username/orders`)
+    .post(UsersController_1.postOrder);
 exports.default = userRouter;

@@ -16,7 +16,9 @@ exports.addUser = addUser;
 exports.addAddress = addAddress;
 exports.removeAddress = removeAddress;
 exports.findAddresses = findAddresses;
+exports.addOrder = addOrder;
 const db_1 = __importDefault(require("../db"));
+const utils_1 = require("../utils");
 function addUser(username, password, email, dob, title, first_name, last_name) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = yield db_1.default.query(`INSERT INTO users (username, password, email, dob, title, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6,$7) 
@@ -43,5 +45,17 @@ function findAddresses(username) {
     return __awaiter(this, void 0, void 0, function* () {
         const addresses = yield db_1.default.query("SELECT * FROM addresses WHERE username = $1", [username]);
         return addresses.rows;
+    });
+}
+function addOrder(username, games, sleeves, address_id, date) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log('called');
+        const order = yield db_1.default.query(`INSERT INTO orders 
+        (username, address_id, date)
+        VALUES ($1, $2, $3)
+        RETURNING *`, [username, address_id, date]);
+        let order_id = order.rows[0].order_id;
+        console.log(order_id);
+        yield (0, utils_1.insertOrderItems)(order_id, games, 'games');
     });
 }

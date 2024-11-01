@@ -4,6 +4,7 @@ import { testData } from "../db/data/test-data/test-data";
 import app from "../app";
 import db from "../db";
 import exp from "constants";
+import { sleeves } from "../db/data/test-data/sleeves";
 
 
 beforeEach(async () =>await seed(testData));
@@ -290,3 +291,90 @@ describe('GET/api/users/:username/reviews', () => {
         await agent.get("/api/users/coopstrategist/addresses").expect(403);
     })
 });
+
+describe.only('POST/api/users/:username/orders', () => {
+    it('returns a 201 when given correct data', async () => {
+        let agent = supertest.agent(app)
+        await agent.post('/api/users/login').send({ username: 'familygamer', password: '1234' }).expect(200)
+        await agent.post('/api/users/familygamer/orders').send({
+            date: '06/06/2024',
+            address_id: 3,
+            games:[{id:1, qty:3}, {id:2, qty:1}]
+        }).expect(201)
+    })
+    it('returns the correct order object', async () => {
+        let agent = supertest.agent(app)
+        await agent
+          .post("/api/users/login")
+          .send({ username: "familygamer", password: "1234" })
+          .expect(200);
+        let res = await agent
+          .post("/api/users/familygamer/orders")
+          .send({
+            date: "06/06/2024",
+            address_id: 3,
+            games: [
+              { id: 1, qty: 3 },
+              { id: 2, qty: 1 },
+            ],
+          })
+            .expect(201);
+        expect(res.body.order).toEqual({
+            order_id: 6,
+            total_price: "13496",
+            address_id: 3,
+            items: ['Catan', 'Ticket to Ride'],
+            username: 'familygamer',
+            date:"2024-06-05T23:00:00.000Z"
+        })
+    })
+    it('order containing both games and sleeves', async () => {
+        let agent = supertest.agent(app);
+        await agent
+          .post("/api/users/login")
+          .send({ username: "familygamer", password: "1234" })
+          .expect(200);
+        let res = await agent
+          .post("/api/users/familygamer/orders")
+          .send({
+            date: "06/06/2024",
+            address_id: 3,
+            games: [
+              { id: 1, qty: 3 },
+              { id: 2, qty: 1 },
+              ],
+            sleeves: [
+                { id: 1, qty: 2 },
+                {id:3, qty:1}
+            ]
+          })
+            .expect(201)
+        expect(res.body.order).toEqual({
+          order_id: 6,
+          total_price: "14793",
+          address_id: 3,
+            items: ["Catan",
+                "Ticket to Ride",
+                "Standard Card Sleeves",
+                'Mini Card Sleeves'
+            ],
+          username: "familygamer",
+          date: "2024-06-05T23:00:00.000Z",
+        });
+    })
+    it('returns a erorr if qty is > stock', async() => {
+         let agent = supertest.agent(app);
+         await agent
+           .post("/api/users/login")
+           .send({ username: "familygamer", password: "1234" })
+           .expect(200);
+         let res = await agent.post("/api/users/familygamer/orders").send({
+           date: "06/06/2024",
+           address_id: 3,
+           games: [
+             { id: 1, qty: 200 },
+             { id: 2, qty: 1 },
+           ],
+         }).expect(400)
+    })
+})

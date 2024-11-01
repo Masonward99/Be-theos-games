@@ -19,6 +19,7 @@ exports.logout = logout;
 exports.deleteAddress = deleteAddress;
 exports.getAddresses = getAddresses;
 exports.isUserAuthenticated = isUserAuthenticated;
+exports.postOrder = postOrder;
 const UsersModels_1 = require("../models/UsersModels");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const passportConfig_1 = __importDefault(require("../passportConfig"));
@@ -118,5 +119,19 @@ function isUserAuthenticated(req, res, next) {
             return res.status(403).send("Access denied");
         }
         next();
+    });
+}
+function postOrder(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log('here');
+        let { username } = req.params;
+        let { games, sleeves, address_id, date } = req.body;
+        try {
+            let order = yield (0, UsersModels_1.addOrder)(username, games, sleeves, address_id, date);
+            // res.status(201).send({order})
+        }
+        catch (err) {
+            next(err);
+        }
     });
 }

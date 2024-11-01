@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteAddress, getAddresses, isUserAuthenticated, login, logout, postAddress, postUser } from '../controllers/UsersController';
+import { deleteAddress, getAddresses, isUserAuthenticated, login, logout, postAddress, postOrder, postUser } from '../controllers/UsersController';
 
 const userRouter = express.Router()
 
@@ -21,4 +21,6 @@ userRouter.route('/:username/addresses')
 userRouter.route('/:username/addresses/:review_id')
     .delete(deleteAddress)
 
+userRouter.route(`/:username/orders`)
+    .post(postOrder)
 export default userRouter
