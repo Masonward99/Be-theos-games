@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteAddress, getAddresses, isUserAuthenticated, login, logout, postAddress, postOrder, postUser } from '../controllers/UsersController';
+import { deleteAddress, getAddresses, getOrders, isUserAuthenticated, login, logout, postAddress, postOrder, postUser } from '../controllers/UsersController';
 
 const userRouter = express.Router()
 
@@ -23,4 +23,5 @@ userRouter.route('/:username/addresses/:review_id')
 
 userRouter.route(`/:username/orders`)
     .post(postOrder)
+    .get(getOrders)
 export default userRouter

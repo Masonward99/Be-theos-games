@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { addAddress, addOrder, addUser, findAddresses, removeAddress } from "../models/UsersModels";
+import { addAddress, addOrder, addUser, findAddresses, findOrders, removeAddress } from "../models/UsersModels";
 import bcrypt from "bcryptjs";
 import passport from "../passportConfig";
 
@@ -112,6 +112,18 @@ export async function postOrder(req: Request, res: Response, next: NextFunction)
   try {
     let order = await addOrder(username, games, sleeves, address_id, date)
     res.status(201).send({order})
+  }
+  catch (err) {
+    next(err)
+  }
+}
+
+export async function getOrders(req: Request, res: Response, next: NextFunction) {
+  let { username } = req.params
+  console.log(username)
+  try {
+    let orders = await findOrders(username)
+    res.status(200).send({orders})
   }
   catch (err) {
     next(err)

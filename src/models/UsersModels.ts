@@ -52,5 +52,16 @@ export async function addOrder(username: string, games: any, sleeves: any, addre
       [order_id]
     );
     return order.rows[0]
-    
+}
+
+export async function findOrders(username: any) {
+    let orders =
+      await db.query(`SELECT orders.*, sum(order_items.qty * order_items.price) total_price,
+        sum(order_items.price) AS num_items
+        FROM ORDERS
+        left join order_items
+        ON orders.order_id = order_items.order_id
+        WHERE orders.username =  $1
+        GROUP BY orders.order_id;`, [username]);
+    return orders.rows
 }
