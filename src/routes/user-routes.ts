@@ -1,16 +1,18 @@
 import express from "express";
-import { deleteAddress, getAddresses, login, logout, postAddress, postUser } from '../controllers/UsersController';
+import { deleteAddress, getAddresses, isUserAuthenticated, login, logout, postAddress, postUser } from '../controllers/UsersController';
 
 const userRouter = express.Router()
 
 userRouter.route('/signup')
-    .post(postUser)
+.post(postUser)
 
 userRouter.route('/login')
-    .post(login)
+.post(login)
 
 userRouter.route('/logout')
-    .get(logout)
+.get(logout)
+
+userRouter.use('/:username', isUserAuthenticated)
 
 userRouter.route('/:username/addresses')
     .post(postAddress)

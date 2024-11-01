@@ -42,6 +42,15 @@ app.use((err, req, res, next) => {
     }
 });
 app.use((err, req, res, next) => {
+    //username doesnt exist
+    if (err.code == "23503") {
+        res.status(400).send("User does not exist");
+    }
+    else {
+        next(err);
+    }
+});
+app.use((err, req, res, next) => {
     //violates non-negative constraint
     if (err.code == '23514') {
         res.status(400).send('This value cannot be negative');
@@ -59,6 +68,7 @@ app.use((err, req, res, next) => {
     }
 });
 app.use((err, req, res, next) => {
+    console.log(err);
     if (!err.message) {
         console.log(err);
         next(err);
@@ -66,5 +76,11 @@ app.use((err, req, res, next) => {
     if (err.message == 'category does not exist') {
         res.status(400).send(err.message);
     }
+    if (err.message == 'Address_id does not exist') {
+        res.status(404).send(err.message);
+    }
+});
+app.use((err, req, res, next) => {
+    res.status(500).send('Internal server error');
 });
 exports.default = app;

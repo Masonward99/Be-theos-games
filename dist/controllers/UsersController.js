@@ -15,7 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postUser = postUser;
 exports.login = login;
 exports.postAddress = postAddress;
-const UsersModels_1 = require("../modles/UsersModels");
+exports.logout = logout;
+exports.deleteAddress = deleteAddress;
+exports.getAddresses = getAddresses;
+exports.isUserAuthenticated = isUserAuthenticated;
+const UsersModels_1 = require("../models/UsersModels");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const passportConfig_1 = __importDefault(require("../passportConfig"));
 function postUser(req, res, next) {
@@ -23,7 +27,7 @@ function postUser(req, res, next) {
         let { username, password, email, dob, title, first_name, last_name } = req.body;
         try {
             if (!password)
-                return res.status(400).send('password is required');
+                return res.status(400).send("password is required");
             password = yield bcryptjs_1.default.hash(password, 10);
             const user = yield (0, UsersModels_1.addUser)(username, password, email, dob, title, first_name, last_name);
             return res.status(201).send({ user });
@@ -38,7 +42,7 @@ function login(req, res, next) {
         if (err)
             return res.status(500).send({ msg: "Server error" });
         if (!user)
-            return res.status(401).send({ msg: 'Invalid username or password' });
+            return res.status(401).send({ msg: "Invalid username or password" });
         req.logIn(user, (err) => {
             if (err)
                 return res.status(500).send({ msg: "Server error" });
@@ -49,7 +53,7 @@ function login(req, res, next) {
                 first_name: user.first_name,
                 last_name: user.last_name,
                 dob: user.dob,
-                email: user.email
+                email: user.email,
             };
             res.status(200).send({ userData });
         });
@@ -58,20 +62,61 @@ function login(req, res, next) {
 function postAddress(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let { username } = req.params;
+        let { postcode, address_line1, city } = req.body;
+        try {
+            let address = yield (0, UsersModels_1.addAddress)(username, address_line1, postcode, city);
+            res.status(201).send({ address });
+        }
+        catch (err) {
+            next(err);
+        }
+    });
+}
+function logout(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send("Logout succesful");
+        });
+    });
+}
+function deleteAddress(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let { username, review_id } = req.params;
+        try {
+            yield (0, UsersModels_1.removeAddress)(review_id, username);
+            res.status(204).send();
+        }
+        catch (err) {
+            next(err);
+        }
+    });
+}
+function getAddresses(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let { username } = req.params;
+        try {
+            let addresses = yield (0, UsersModels_1.findAddresses)(username);
+            res.status(200).send({ addresses });
+        }
+        catch (err) {
+            next(err);
+        }
+    });
+}
+function isUserAuthenticated(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //midleware function to check that user is authenticated and is the same as the user in request
+        let { username } = req.params;
         if (!req.isAuthenticated()) {
-            console.log('not logged in');
-            return res.status(401).send('Need to login to use this endpoint');
+            return res.status(401).send("Need to login to use this endpoint");
         }
         const authUser = req.user;
         if (!(username == authUser.username)) {
-            console.log('wrong user');
-            return res.status(403).send('Access denied');
+            return res.status(403).send("Access denied");
         }
-        // if (!username == req.user.username)
-        //   let { postcode, address_line1, city } = req.body
-        //   try {
-        //   }
-        //   catch (err) { next(err) }
-        res.status(200).send();
+        next();
     });
 }

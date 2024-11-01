@@ -19,6 +19,15 @@ const app_1 = __importDefault(require("../app"));
 const db_1 = __importDefault(require("../db"));
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () { return yield (0, seed_1.seed)(test_data_1.testData); }));
 afterAll(() => db_1.default.end());
+const user = {
+    password: "1234",
+    username: "Mw17",
+    dob: "06/06/1999",
+    title: "Mr.",
+    first_name: "Mason",
+    last_name: "Ward",
+    email: "masonward99@hotmail.com",
+};
 describe('POST/api/users/signup', () => {
     const user = {
         username: 'Mw17',
@@ -109,5 +118,178 @@ describe(`POST/api/users/login`, () => {
             last_name: "Ward",
             email: "masonward99@hotmail.com",
         });
+    }));
+});
+describe('post/api/users/:username/addresses', () => {
+    const user = {
+        password: "1234",
+        username: "Mw17",
+        dob: "06/06/1999",
+        title: "Mr.",
+        first_name: "Mason",
+        last_name: "Ward",
+        email: "masonward99@hotmail.com",
+    };
+    it('returns a 401error if the user is not signed in', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.post('/api/users/horrorfan/addresses').expect(401);
+    }));
+    it('returns a 403 error if the users is signed in but isnt the same as the username', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        //create user
+        yield agent.post("/api/users/signup").send(user).expect(201);
+        //sign in
+        yield agent.post("/api/users/login").send({ username: "Mw17", password: "1234" }).expect(200);
+        //post address
+        yield agent.post("/api/users/horrorfan/addresses").expect(403);
+    }));
+    it('returns a 201 when given the correct data', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        //create user
+        yield agent.post("/api/users/signup").send(user).expect(201);
+        //sign in
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "Mw17", password: "1234" })
+            .expect(200);
+        //post address
+        yield agent.post("/api/users/Mw17/addresses")
+            .send({
+            postcode: "E1 6AN",
+            city: "London",
+            address_line1: "22 Fleet Street",
+        })
+            .expect(201);
+    }));
+    it('returns an address object correctly', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        //create user
+        yield agent.post("/api/users/signup").send(user).expect(201);
+        //sign in
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "Mw17", password: "1234" })
+            .expect(200);
+        //post address
+        let address = yield agent.post("/api/users/Mw17/addresses")
+            .send({
+            postcode: "E1 6AN",
+            city: "London",
+            address_line1: "22 Fleet Street",
+        })
+            .expect(201);
+        expect(address.body.address).toEqual({
+            postcode: "E1 6AN",
+            city: "London",
+            address_line1: "22 Fleet Street",
+            username: "Mw17",
+            address_id: 19
+        });
+    }));
+});
+describe('/api/users/logout', () => {
+    it('Returns a 200 if it succefully logs out a user', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.post('/api/users/signup').send(user).expect(201);
+        yield agent.post('/api/users/login').send({ username: 'Mw17', password: '1234' }).expect(200);
+        yield agent.get('/api/users/logout').expect(200);
+    }));
+    it('user is no longer logged in', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.post("/api/users/signup").send(user).expect(201);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "Mw17", password: "1234" })
+            .expect(200);
+        yield agent.get("/api/users/logout").expect(200);
+        yield agent.post("/api/users/Mw17/addresses").send({
+            postcode: "E1 6AN",
+            city: "London",
+            address_line1: "22 Fleet Street",
+        }).expect(401);
+    }));
+});
+describe("DELETE/api/users/:username/reviews/:review_id", () => {
+    it('Returns a 204 when given a valid id ', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.post('/api/users/login').send({ username: 'coopstrategist', password: '1234' }).expect(200);
+        yield agent.delete("/api/users/coopstrategist/addresses/5").expect(204);
+    }));
+    it("Returns a 401 error if not signed in", () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.delete("/api/users/coopstrategist/addresses/5").expect(401);
+    }));
+    it("returns a 403 if signed in to a different user", () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.post('/api/users/login').send({ username: 'familygamer', password: '1234' }).expect(200);
+        yield agent.delete("/api/users/coopstrategist/addresses/5").expect(403);
+    }));
+    it("deletes the review with that id", () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "coopstrategist", password: "1234" })
+            .expect(200);
+        yield agent.delete("/api/users/coopstrategist/addresses/5").expect(204);
+        let res = yield db_1.default.query('SELECT * FROM addresses WHERE address_id = 5');
+        expect(res.rows.length).toBe(0);
+    }));
+    it('returns a 404 error if review does not exist on that user', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "coopstrategist", password: "1234" })
+            .expect(200);
+        yield agent
+            .delete("/api/users/coopstrategist/addresses/1")
+            .expect(404);
+    }));
+});
+describe('GET/api/users/:username/reviews', () => {
+    it('Returns a 200 when given a valid username', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "coopstrategist", password: "1234" })
+            .expect(200);
+        yield agent.get('/api/users/coopstrategist/addresses').expect(200);
+    }));
+    it('returns an array of the correct length', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "coopstrategist", password: "1234" })
+            .expect(200);
+        let res = yield agent.get("/api/users/coopstrategist/addresses").expect(200);
+        expect(res.body.addresses.length).toBe(2);
+    }));
+    it('each address has the correct keys', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "coopstrategist", password: "1234" })
+            .expect(200);
+        let res = yield agent
+            .get("/api/users/coopstrategist/addresses")
+            .expect(200);
+        res.body.addresses.every((address) => expect(address).toEqual(expect.objectContaining({
+            address_line1: expect.any(String),
+            postcode: expect.any(String),
+            city: expect.any(String),
+            username: expect.any(String),
+            address_id: expect.any(Number)
+        })));
+    }));
+    it('returns a 401 when not signed in', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent.get('/api/users/coopstrategist/addresses').expect(401);
+    }));
+    it('returns a 403 if logged in to a different user', () => __awaiter(void 0, void 0, void 0, function* () {
+        let agent = supertest_1.default.agent(app_1.default);
+        yield agent
+            .post("/api/users/login")
+            .send({ username: "familygamer", password: "1234" })
+            .expect(200);
+        yield agent.get("/api/users/coopstrategist/addresses").expect(403);
     }));
 });

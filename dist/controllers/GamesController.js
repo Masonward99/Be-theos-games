@@ -17,22 +17,22 @@ exports.deleteGame = deleteGame;
 exports.postCategoriesToGame = postCategoriesToGame;
 exports.deleteCateogryFromGames = deleteCateogryFromGames;
 exports.patchGame = patchGame;
-const GamesModels_1 = require("../modles/GamesModels");
+const GamesModels_1 = require("../models/GamesModels");
 function getGames(req, res, next) {
     (0, GamesModels_1.findGames)()
-        .then(games => res.status(200).send({ games }))
+        .then((games) => res.status(200).send({ games }))
         .catch(next);
 }
 function getGame(req, res, next) {
     const id = req.params.game_id;
     (0, GamesModels_1.findGame)(id)
-        .then(game => res.status(200).send({ game }))
+        .then((game) => res.status(200).send({ game }))
         .catch(next);
 }
 function getGameReviews(req, res, next) {
     const id = req.params.game_id;
     (0, GamesModels_1.findGameReviews)(id)
-        .then(reviews => res.status(200).send({ reviews }))
+        .then((reviews) => res.status(200).send({ reviews }))
         .catch(next);
 }
 function postGame(req, res, next) {

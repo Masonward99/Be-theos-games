@@ -173,6 +173,11 @@ describe('DELETE/api/games/:game_id', () => {
     it('Can delete games where other tables depend on the game_id', () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, supertest_1.default)(app_1.default).delete('/api/games/1').expect(204);
     }));
+    it("delete all reviews on the game", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(app_1.default).delete('/api/games/1').expect(204);
+        let res = yield db_1.default.query(`SELECT * FROM reviews WHERE (entity_type ='games' AND entity_id = 1)`);
+        expect(res.rows.length).toBe(0);
+    }));
 });
 describe('POST/api/games/game_id/categories', () => {
     it('returns a 201 when categories are added', () => __awaiter(void 0, void 0, void 0, function* () {

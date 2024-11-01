@@ -78,8 +78,8 @@ const createTables = () => {
       .then(() =>
         db.query(`CREATE TABLE orders (
         order_id SERIAL PRIMARY KEY,
-        address_id INT REFERENCES addresses(address_id) ON DELETE SET NULL,
-        user_id VARCHAR REFERENCES users(username),
+        address_id INT NULL REFERENCES addresses(address_id) ON DELETE SET NULL,
+        username VARCHAR REFERENCES users(username),
         date DATE);`)
       )
       .then(() =>
@@ -104,16 +104,15 @@ const createTables = () => {
       .then(() =>
         db.query(`CREATE TABLE order_items (
         item_id SERIAL PRIMARY KEY,
-        entity_type VARCHAR,
-        entity_id INT,
+        name VARCHAR,
         qty INT,
-        entity_name VARCHAR,
+        price INT,
         order_id INT REFERENCES orders(order_id));`)
       );
 }
 
 const addData = (data: SeedData) => {
-  const { games, categories, users, sleeves, gameCards, gameCategories, reviews, addresses} = data; 
+  const { games, categories, users, sleeves, gameCards, gameCategories, reviews, addresses, orders , orderItems} = data; 
   const insertGamesQueryStr = format(`INSERT INTO games (name, price, stock, game_body, bgg_id) VALUES %L;`, 
     games.map(({ name , price, stock, game_body, bgg_id }) => [name, price, stock, game_body, bgg_id])
   )
@@ -158,7 +157,16 @@ const addData = (data: SeedData) => {
       const insertAddressesQueryStr = format(`INSERT INTO addresses (postcode, city, address_line1, username) VALUES %L;`,
       addresses.map(({ postcode, city, address_line1, username }) => [postcode, city, address_line1, username]))
       return db.query(insertAddressesQueryStr)
-      
+    })
+    .then(() => {
+      const insertOrdersQueryStr = format(`INSERT INTO orders (address_id, username, date) VALUES %L;`, 
+        orders.map(({ address_id, username, date }) => [address_id, username, date]))
+      return db.query(insertOrdersQueryStr)
+    })
+    .then(() => {
+      const insertOrderItemsQueryStr = format(`INSERT INTO order_items (name, qty, price, order_id) VALUES %L;`,
+        orderItems.map(({ name, price, qty, order_id }) => [name, price, qty, order_id]))
+      return db.query(insertOrderItemsQueryStr)
   })
 }
 

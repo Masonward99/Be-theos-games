@@ -8,30 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCategories = getCategories;
-exports.postCategory = postCategory;
-const CategoriesModels_1 = require("../models/CategoriesModels");
-function getCategories(req, res, next) {
+exports.findCategories = findCategories;
+exports.addCategory = addCategory;
+const db_1 = __importDefault(require("../db"));
+function findCategories() {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const categories = yield (0, CategoriesModels_1.findCategories)();
-            return res.status(200).send({ categories });
-        }
-        catch (err) {
-            next(err);
-        }
+        const categories = (yield db_1.default.query(`SELECT categories.*, count(games_categories.game_id) AS num_games  
+      FROM categories LEFT JOIN games_categories 
+      ON categories.category_name = games_categories.category_name 
+      group BY (categories.category_name);`)).rows;
+        return categories;
     });
 }
-function postCategory(req, res, next) {
+function addCategory(name, description) {
     return __awaiter(this, void 0, void 0, function* () {
-        let { category_name, description } = req.body;
-        try {
-            const category = yield (0, CategoriesModels_1.addCategory)(category_name, description);
-            return res.status(201).send({ category });
-        }
-        catch (err) {
-            next(err);
-        }
+        const category = yield db_1.default.query(`INSERT INTO categories (category_name, description) VALUES ($1, $2) RETURNING *;`, [name, description]);
+        return category.rows[0];
     });
 }

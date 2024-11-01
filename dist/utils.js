@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkCategoryInUse = exports.checkExists = void 0;
 exports.checkAllCategoriesExist = checkAllCategoriesExist;
 exports.addAllCategoriesToGames = addAllCategoriesToGames;
+exports.deleteEntityReviews = deleteEntityReviews;
 const db_1 = __importDefault(require("./db"));
 const pg_format_1 = __importDefault(require("pg-format"));
 const checkExists = (tableName, columnName, valueArray) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,5 +53,11 @@ function addAllCategoriesToGames(categories, game_id) {
           WHERE games.game_id = $1
           GROUP BY games.game_id ;`, [game_id]);
         return game;
+    });
+}
+function deleteEntityReviews(entity_id, entity_type) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let res = yield db_1.default.query(`DELETE FROM reviews WHERE(entity_type= $1 AND entity_id = $2)`, [entity_type, entity_id]);
+        return res;
     });
 }

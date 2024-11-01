@@ -1,6 +1,5 @@
 import db from "./db";
 import format from "pg-format";
-import bcrypt from 'bcryptjs'
 
 export const checkExists = async (tableName: string, columnName: string , valueArray: any) => {
   const queryStr = format("SELECT * FROM %I WHERE %I = $1;", tableName, columnName);
@@ -45,3 +44,4 @@ export async function deleteEntityReviews(entity_id:any, entity_type:any) {
   let res = await db.query(`DELETE FROM reviews WHERE(entity_type= $1 AND entity_id = $2)`, [entity_type, entity_id])
   return res
 }
+
