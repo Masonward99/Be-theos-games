@@ -79,6 +79,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err.message == 'category does not exist') {
     res.status(400).send(err.message)
   }
+  if (err.message == 'Address_id does not exist') {
+    res.status(404).send(err.message)
+  }
  })
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

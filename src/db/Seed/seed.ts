@@ -78,7 +78,7 @@ const createTables = () => {
       .then(() =>
         db.query(`CREATE TABLE orders (
         order_id SERIAL PRIMARY KEY,
-        address_id INT REFERENCES addresses(address_id),
+        address_id INT REFERENCES addresses(address_id) ON DELETE SET NULL,
         user_id VARCHAR REFERENCES users(username),
         date DATE);`)
       )
